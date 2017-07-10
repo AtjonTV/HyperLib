@@ -1,0 +1,87 @@
+#This File is not Finished yet ... there are a lot of functions not listed.
+
+HyperLib v2.4.5.62 by Thomas Obernosterer
+
+Einbindung für C# Code
+{
+	using HyperLib;
+}
+
+Funktionen für Integer
+{
+	using HyperLib;
+
+	bool IsStringANumber = Integer.isInteger(stringvalue);
+
+	bool AreStringsNumbers = Integer.areIntegers(stringarray);
+}
+
+Funktionen für Boolean
+{
+	using HyperLib;
+
+	bool IsStringABoolean = Boolean.isBoolean(stringvalue);
+	
+	bool AreStringsBooleans = Boolean.areBooleans(stringarray);
+}
+
+Funktionen für Double
+{
+	using HyperLib;
+
+	bool IsStringADouble = Double.isDouble(stringvalue);
+
+	bool AreStringsDoubles = Double.areDoubles(stringarray);
+}
+
+Funktionen für Letter
+{
+	using HyperLib;
+
+	bool IsCharALetter = Letter.isLetter(charvalue);
+
+	bool AreStringsOnlyLetters = Letter.areOnlyLetters(stringvalue);
+}
+
+Funktionen für EasyCrypt
+{
+	using HyperLib;
+
+	string ByteHash = EasyCrypt.GetSHA256Hash(bytearray);
+
+	string StreamHash = EasyCrypt.GetSHA256Hash(stream);	
+}
+
+Funktionen für Ammount
+{
+	using HyperLib;
+
+	bool IsArrayContentTheSameAsString = Ammount.compareStringArray(stringarray, stringvalue);
+
+	bool IsArrayContentTheSameAsInteger = Ammount.compareIntArray(intarray, intvalue);
+
+ 	bool IsArrayContentTheSameAsByte = Ammount.compareByteArray(bytearray, bytevalue);
+
+	bool IsArrayContentTheSameAsBoolean = Ammount.compareBoolArray(boolarray, boolvalue);
+}
+
+Funktionen für ASCII
+{
+	using HyperLib;
+
+	int[] asciiFromString = ASCII.StringToAscii(stringvalue);
+
+	string stringFromAscii = ASCII.AsciiToString(intarray);
+
+	int intFromChar = ASCII.CharToAscii(charvalue);
+
+	char charFromInt = ASCII.AsciiToChar(intvalue);
+}
+
+Funktionen für ASCII_Check
+{
+	using HyperLib;
+
+	ASCII_Check.InternalConvert(chararray);
+	ASCII_Check.
+}
