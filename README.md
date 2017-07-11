@@ -15,9 +15,12 @@ The XmlManager does not realy work ...
 
 The IntergerOld will be removed in next Version.
 
-# If you found a mistake in the Code, or have a idea for the Library tell me.
+# Need help with the Library?
+Here is a Listing of all functions, methods and objects: https://github.com/AtjonTV/HyperLib/wiki
 
-Write on GitHub or contect me via E-Mail: admin.atjontv@ætvg-studios.at
+# If you find a mistake in the Code, or have a idea for the Library tell me.
+
+Write on GitHub or contect me via E-Mail: admin.atjontv@atvg-studios.at
 
 # Who am i?
 
