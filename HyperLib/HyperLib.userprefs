@@ -1,0 +1,16 @@
+﻿<Properties>
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
+  <MonoDevelop.Ide.DebuggingService.PinnedWatches />
+  <MonoDevelop.Ide.DebuggingService.Breakpoints>
+    <BreakpointStore />
+  </MonoDevelop.Ide.DebuggingService.Breakpoints>
+  <MonoDevelop.Ide.Workbench ActiveDocument="HyperLib\ASCII.cs">
+    <Files>
+      <File FileName="HyperLib\XmlManager.cs" Line="73" Column="18" />
+      <File FileName="HyperLib\Information.cs" Line="11" Column="69" />
+      <File FileName="HyperLib\ASCII.cs" Line="13" Column="32" />
+      <File FileName="HyperLib\Double.cs" Line="12" Column="10" />
+    </Files>
+  </MonoDevelop.Ide.Workbench>
+  <MultiItemStartupConfigurations />
+</Properties>

@@ -1,0 +1,5 @@
+Y:\Lehrlinge\Gruppe L\Thomas Obernosterer\Software\Library's\HyperLib\HyperLib\bin\Debug\HyperLib.dll
+Y:\Lehrlinge\Gruppe L\Thomas Obernosterer\Software\Library's\HyperLib\HyperLib\bin\Debug\HyperLib.pdb
+Y:\Lehrlinge\Gruppe L\Thomas Obernosterer\Software\Library's\HyperLib\HyperLib\obj\Debug\HyperLib.dll
+Y:\Lehrlinge\Gruppe L\Thomas Obernosterer\Software\Library's\HyperLib\HyperLib\obj\Debug\HyperLib.pdb
+Y:\Lehrlinge\Gruppe L\Thomas Obernosterer\Software\Library's\HyperLib\HyperLib\obj\Debug\HyperLib.csprojResolveAssemblyReference.cache
