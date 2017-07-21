@@ -7,11 +7,12 @@ namespace HyperLib
         public static String LibraryName        { get { return "HyperLib"; } }
         public static String LibraryCreator     { get { return "AtjonTV"; } }
         public static String LibraryFramework   { get { return ".net Framework 4.5.2"; } }
-        public static String LibraryVersion     { get { return "2.4.6"; } }
-        public static int    LibraryVersionID   { get { return    64; } }
+        public static String LibraryVersion     { get { return "2.4.9"; } }
+        public static int    LibraryVersionID   { get { return    68; } }
         public static String XmlManagerVersion  { get { return "1.9"; } }
 		public static String EasyHashVersion 	{ get { return "1.9"; } }
         public static String JsonManagerVersion { get { return "1.8"; } }
+		public static String RedEngineVersion 	{ get { return "1.8"; } }
         public static String ASCII_CheckVersion { get { return "1.7"; } }
         public static String BV_VEVersion       { get { return "1.7"; } }
         public static String ASCIIVersion       { get { return "1.5"; } }

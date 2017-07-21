@@ -62,6 +62,7 @@
     <Compile Include="XmlManager.cs">
       <IncludeInPackage>false</IncludeInPackage>
     </Compile>
+    <Compile Include="RedEngine.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="_coming-soon.txt" />
