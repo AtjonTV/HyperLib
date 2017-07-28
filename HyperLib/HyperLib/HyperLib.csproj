@@ -53,6 +53,8 @@
     <Compile Include="BV_ValueException.cs" />
     <Compile Include="Double.cs" />
     <Compile Include="EasyHash.cs" />
+    <Compile Include="Generator.cs" />
+    <Compile Include="GeneratorType.cs" />
     <Compile Include="Information.cs" />
     <Compile Include="Integer.cs" />
     <Compile Include="IntegerSort.cs" />
@@ -63,9 +65,6 @@
       <IncludeInPackage>false</IncludeInPackage>
     </Compile>
     <Compile Include="RedEngine.cs" />
-  </ItemGroup>
-  <ItemGroup>
-    <Content Include="_coming-soon.txt" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

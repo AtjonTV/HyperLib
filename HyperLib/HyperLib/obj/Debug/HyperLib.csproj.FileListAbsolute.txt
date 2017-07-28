@@ -3,3 +3,8 @@ Y:\Lehrlinge\Gruppe L\Thomas Obernosterer\Software\Library's\HyperLib\HyperLib\b
 Y:\Lehrlinge\Gruppe L\Thomas Obernosterer\Software\Library's\HyperLib\HyperLib\obj\Debug\HyperLib.dll
 Y:\Lehrlinge\Gruppe L\Thomas Obernosterer\Software\Library's\HyperLib\HyperLib\obj\Debug\HyperLib.pdb
 Y:\Lehrlinge\Gruppe L\Thomas Obernosterer\Software\Library's\HyperLib\HyperLib\obj\Debug\HyperLib.csprojResolveAssemblyReference.cache
+C:\Users\viuser\Documents\GitHub\HyperLib\HyperLib\HyperLib\obj\Debug\HyperLib.csprojResolveAssemblyReference.cache
+C:\Users\viuser\Documents\GitHub\HyperLib\HyperLib\HyperLib\obj\Debug\HyperLib.dll
+C:\Users\viuser\Documents\GitHub\HyperLib\HyperLib\HyperLib\obj\Debug\HyperLib.pdb
+C:\Users\viuser\Documents\GitHub\HyperLib\HyperLib\HyperLib\bin\Debug\HyperLib.dll
+C:\Users\viuser\Documents\GitHub\HyperLib\HyperLib\HyperLib\bin\Debug\HyperLib.pdb
