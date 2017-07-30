@@ -1,13 +1,13 @@
 # HyperLib
 HyperLib is a C# .net Framework v4.5.2 Library that contains a collection of usefull functions.
 
-HyperLip v2.5.0.69 created by AtjonTV
+HyperLip v2.5.1.70 created by AtjonTV
 
-~79 Functions in 15 Classes (Files)
+~79 Functions in 16 Classes (Files)
 
-~61 Hours of Work
+~62 Hours of Work
 
-~1.100 Lines of Code
+~1.150 Lines of Code
 
 !INFO!
 
