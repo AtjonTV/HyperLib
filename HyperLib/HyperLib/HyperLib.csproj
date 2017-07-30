@@ -54,6 +54,7 @@
     <Compile Include="Double.cs" />
     <Compile Include="EasyHash.cs" />
     <Compile Include="Generator.cs" />
+    <Compile Include="GeneratorCharset.cs" />
     <Compile Include="GeneratorType.cs" />
     <Compile Include="Information.cs" />
     <Compile Include="Integer.cs" />

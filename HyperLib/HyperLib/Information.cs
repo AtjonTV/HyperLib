@@ -7,8 +7,8 @@ namespace HyperLib
         public static String LibraryName            { get { return "HyperLib"; } }
         public static String LibraryCreator         { get { return "AtjonTV"; } }
         public static String LibraryFramework       { get { return ".net Framework 4.5.2"; } }
-        public static String LibraryVersion         { get { return "2.5.0"; } }
-        public static int    LibraryVersionID       { get { return 69; } }
+        public static String LibraryVersion         { get { return "2.5.1"; } }
+        public static int    LibraryVersionID       { get { return 70; } }
         public static String XmlManagerVersion      { get { return "1.9"; } }
         public static String EasyHashVersion        { get { return "1.9"; } }
         public static String JsonManagerVersion     { get { return "1.8"; } }
@@ -19,11 +19,12 @@ namespace HyperLib
         public static String AmmountVersion         { get { return "1.5"; } }
         public static String BasicVehicleVersion    { get { return "1.5"; } }
         public static String IntegetSortVersion     { get { return "1.4"; } }
-        public static String GeneratorVersion       { get { return "1.3"; } }
+        public static String GeneratorVersion       { get { return "1.4"; } }
         public static String BooleanVersion         { get { return "1.3"; } }
         public static String DoubleVersion          { get { return "1.3"; } }
         public static String LetterVersion          { get { return "1.3"; } }
         public static String IntegerVersion         { get { return "1.2"; } }
         public static String GeneratorTypeVersion   { get { return "1.0"; } }
+        public static String GeneratorCharsetVersion{ get { return "1.0"; } }
     }
 }

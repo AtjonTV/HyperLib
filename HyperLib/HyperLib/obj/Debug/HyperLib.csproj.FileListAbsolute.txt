@@ -8,3 +8,8 @@ C:\Users\viuser\Documents\GitHub\HyperLib\HyperLib\HyperLib\obj\Debug\HyperLib.d
 C:\Users\viuser\Documents\GitHub\HyperLib\HyperLib\HyperLib\obj\Debug\HyperLib.pdb
 C:\Users\viuser\Documents\GitHub\HyperLib\HyperLib\HyperLib\bin\Debug\HyperLib.dll
 C:\Users\viuser\Documents\GitHub\HyperLib\HyperLib\HyperLib\bin\Debug\HyperLib.pdb
+C:\Users\Developer\Source\Repos\HyperLib\HyperLib\HyperLib\bin\Debug\HyperLib.dll
+C:\Users\Developer\Source\Repos\HyperLib\HyperLib\HyperLib\bin\Debug\HyperLib.pdb
+C:\Users\Developer\Source\Repos\HyperLib\HyperLib\HyperLib\obj\Debug\HyperLib.csprojResolveAssemblyReference.cache
+C:\Users\Developer\Source\Repos\HyperLib\HyperLib\HyperLib\obj\Debug\HyperLib.dll
+C:\Users\Developer\Source\Repos\HyperLib\HyperLib\HyperLib\obj\Debug\HyperLib.pdb
