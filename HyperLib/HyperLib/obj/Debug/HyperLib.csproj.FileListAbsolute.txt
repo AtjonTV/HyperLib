@@ -12,3 +12,7 @@ C:\Users\Developer\Source\Repos\HyperLib\HyperLib\HyperLib\bin\Debug\HyperLib.dl
 C:\Users\Developer\Source\Repos\HyperLib\HyperLib\HyperLib\bin\Debug\HyperLib.pdb
 C:\Users\Developer\Source\Repos\HyperLib\HyperLib\HyperLib\obj\Debug\HyperLib.dll
 C:\Users\Developer\Source\Repos\HyperLib\HyperLib\HyperLib\obj\Debug\HyperLib.pdb
+C:\Users\AtjonTV\Source\Repos\HyperLib\HyperLib\HyperLib\bin\Debug\HyperLib.dll
+C:\Users\AtjonTV\Source\Repos\HyperLib\HyperLib\HyperLib\bin\Debug\HyperLib.pdb
+C:\Users\AtjonTV\Source\Repos\HyperLib\HyperLib\HyperLib\obj\Debug\HyperLib.dll
+C:\Users\AtjonTV\Source\Repos\HyperLib\HyperLib\HyperLib\obj\Debug\HyperLib.pdb
