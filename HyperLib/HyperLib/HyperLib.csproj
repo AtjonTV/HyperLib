@@ -51,6 +51,7 @@
     <Compile Include="BasicVehicle.cs" />
     <Compile Include="Boolean.cs" />
     <Compile Include="BV_ValueException.cs" />
+    <Compile Include="ChatServer.cs" />
     <Compile Include="Double.cs" />
     <Compile Include="EasyCrypt.cs" />
     <Compile Include="EasyHash.cs" />
