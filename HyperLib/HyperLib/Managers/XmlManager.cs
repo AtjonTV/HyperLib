@@ -3,7 +3,7 @@ using System.IO;
 using System.Xml;
 using System.Xml.Serialization;
 
-namespace HyperLib
+namespace HyperLib.Managers
 {
     public class XmlManager
     {

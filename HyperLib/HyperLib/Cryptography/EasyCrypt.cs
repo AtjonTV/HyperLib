@@ -6,7 +6,7 @@ using System.Security.Cryptography;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace HyperLib
+namespace HyperLib.Cryptography
 {
     public class EasyCrypt
     {

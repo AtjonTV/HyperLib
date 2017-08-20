@@ -1,7 +1,9 @@
-﻿using System;
+﻿using HyperLib.Exceptions;
+using HyperLib.Values;
+using System;
 using System.Text.RegularExpressions;
 
-namespace HyperLib
+namespace HyperLib.Objects
 {
     public class BasicVehicle
     {

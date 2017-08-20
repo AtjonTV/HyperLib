@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 
-namespace HyperLib
+namespace HyperLib.Values
 {
     public class Boolean
     {

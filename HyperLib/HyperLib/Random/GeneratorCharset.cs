@@ -4,7 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace HyperLib
+namespace HyperLib.Random
 {
     public enum GeneratorCharset
     {

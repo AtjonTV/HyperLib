@@ -57,8 +57,8 @@
     <Compile Include="Exceptions\BV_ValueException.cs" />
     <Compile Include="Network\ChatServer.cs" />
     <Compile Include="Values\Double.cs" />
-    <Compile Include="Cryptopgraphy\EasyCrypt.cs" />
-    <Compile Include="Cryptopgraphy\EasyHash.cs" />
+    <Compile Include="Cryptography\EasyCrypt.cs" />
+    <Compile Include="Cryptography\EasyHash.cs" />
     <Compile Include="Random\Generator.cs" />
     <Compile Include="Random\GeneratorCharset.cs" />
     <Compile Include="Random\GeneratorType.cs" />

@@ -1,7 +1,7 @@
 ﻿using System;
 using System.Linq;
 
-namespace HyperLib
+namespace HyperLib.Values
 {
     public class Integer
     {

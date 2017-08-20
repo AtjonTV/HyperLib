@@ -2,7 +2,7 @@
 using System.IO;
 using System.Security.Cryptography;
 
-namespace HyperLib
+namespace HyperLib.Cryptography
 {
     public class EasyHash
     {

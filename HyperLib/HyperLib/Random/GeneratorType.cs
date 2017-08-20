@@ -1,4 +1,4 @@
-﻿namespace HyperLib
+﻿namespace HyperLib.Random
 {
     public enum GeneratorType
     {

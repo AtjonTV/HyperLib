@@ -1,4 +1,4 @@
-﻿namespace HyperLib
+﻿namespace HyperLib.Values
 {
     public class IntegerSort
     {

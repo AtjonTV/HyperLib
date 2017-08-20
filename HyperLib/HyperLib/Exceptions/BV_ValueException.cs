@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace HyperLib
+namespace HyperLib.Exceptions
 {
     class BV_ValueException:Exception
     {

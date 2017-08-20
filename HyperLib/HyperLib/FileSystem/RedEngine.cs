@@ -1,8 +1,9 @@
-﻿using System;
+﻿using HyperLib.Cryptography;
+using System;
 using System.Collections.Generic;
 using System.IO;
 
-namespace HyperLib
+namespace HyperLib.FileSystem
 {
 	public class RedEngine
 	{

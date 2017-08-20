@@ -7,7 +7,7 @@ using System.Text;
 using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 
-namespace HyperLib
+namespace HyperLib.Network
 {
     class ChatServer
     {
@@ -16,7 +16,7 @@ namespace HyperLib
         private TcpListener server;
 
         public delegate void ClientConnect();
-        public event ClientConnect onClientConnect;
+        //public event ClientConnect onClientConnect;
 
         public String LocalAdress { get { return ip; }
             set {

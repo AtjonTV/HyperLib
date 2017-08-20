@@ -2,7 +2,7 @@
 using System.IO;
 using System.Web.Script.Serialization;
 
-namespace HyperLib
+namespace HyperLib.Managers
 {
     public class JsonManager
     {

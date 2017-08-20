@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace HyperLib
+namespace HyperLib.ASCII
 {
     public class ASCII
     {

@@ -1,4 +1,4 @@
-﻿namespace HyperLib
+﻿namespace HyperLib.ASCII
 {
     public class ASCII_Check
     {

@@ -1,6 +1,6 @@
 ﻿using System;
 
-namespace HyperLib
+namespace HyperLib.Random
 {
     public class Generator
     {
@@ -51,7 +51,7 @@ namespace HyperLib
 
         private string genAll(int length)
         {
-            Random rnd = new Random();
+            System.Random rnd = new System.Random();
             string key = "";
             for (int i = 0; i < (length - 1); i++)
             {
@@ -82,7 +82,7 @@ namespace HyperLib
 
         private string genNLU(int length)
         {
-            Random rnd = new Random();
+            System.Random rnd = new System.Random();
             string key = "";
             for (int i = 0; i < (length - 1); i++)
             {
