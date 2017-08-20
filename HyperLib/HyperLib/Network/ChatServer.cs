@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace HyperLib
 {
-    public class ChatServer
+    class ChatServer
     {
         private string ip;
         private int port;

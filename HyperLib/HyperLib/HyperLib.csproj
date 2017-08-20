@@ -33,6 +33,9 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="MySql.Data, Version=6.9.9.0, Culture=neutral, PublicKeyToken=c5687fc88969c44d, processorArchitecture=MSIL">
+      <HintPath>..\packages\MySql.Data.6.9.9\lib\net45\MySql.Data.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Web.Extensions" />
@@ -45,29 +48,34 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Ammount.cs" />
-    <Compile Include="ASCII.cs" />
-    <Compile Include="ASCII_Check.cs" />
-    <Compile Include="BasicVehicle.cs" />
-    <Compile Include="Boolean.cs" />
-    <Compile Include="BV_ValueException.cs" />
-    <Compile Include="ChatServer.cs" />
-    <Compile Include="Double.cs" />
-    <Compile Include="EasyCrypt.cs" />
-    <Compile Include="EasyHash.cs" />
-    <Compile Include="Generator.cs" />
-    <Compile Include="GeneratorCharset.cs" />
-    <Compile Include="GeneratorType.cs" />
+    <Compile Include="Managers\MySQLManager.cs" />
+    <Compile Include="Values\Ammount.cs" />
+    <Compile Include="ASCII\ASCII.cs" />
+    <Compile Include="ASCII\ASCII_Check.cs" />
+    <Compile Include="Objects\BasicVehicle.cs" />
+    <Compile Include="Values\Boolean.cs" />
+    <Compile Include="Exceptions\BV_ValueException.cs" />
+    <Compile Include="Network\ChatServer.cs" />
+    <Compile Include="Values\Double.cs" />
+    <Compile Include="Cryptopgraphy\EasyCrypt.cs" />
+    <Compile Include="Cryptopgraphy\EasyHash.cs" />
+    <Compile Include="Random\Generator.cs" />
+    <Compile Include="Random\GeneratorCharset.cs" />
+    <Compile Include="Random\GeneratorType.cs" />
     <Compile Include="Information.cs" />
-    <Compile Include="Integer.cs" />
-    <Compile Include="IntegerSort.cs" />
-    <Compile Include="JsonManager.cs" />
-    <Compile Include="Letter.cs" />
+    <Compile Include="Values\Integer.cs" />
+    <Compile Include="Values\IntegerSort.cs" />
+    <Compile Include="Managers\JsonManager.cs" />
+    <Compile Include="Values\Letter.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="XmlManager.cs">
+    <Compile Include="Managers\XmlManager.cs">
       <IncludeInPackage>false</IncludeInPackage>
     </Compile>
-    <Compile Include="RedEngine.cs" />
+    <Compile Include="FileSystem\RedEngine.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="app.config" />
+    <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

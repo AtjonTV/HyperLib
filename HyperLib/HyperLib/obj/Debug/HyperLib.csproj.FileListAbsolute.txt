@@ -16,3 +16,6 @@ C:\Users\AtjonTV\Source\Repos\HyperLib\HyperLib\HyperLib\bin\Debug\HyperLib.dll
 C:\Users\AtjonTV\Source\Repos\HyperLib\HyperLib\HyperLib\bin\Debug\HyperLib.pdb
 C:\Users\AtjonTV\Source\Repos\HyperLib\HyperLib\HyperLib\obj\Debug\HyperLib.dll
 C:\Users\AtjonTV\Source\Repos\HyperLib\HyperLib\HyperLib\obj\Debug\HyperLib.pdb
+C:\Users\AtjonTV\Source\Repos\HyperLib\HyperLib\HyperLib\bin\Debug\HyperLib.dll.config
+C:\Users\AtjonTV\Source\Repos\HyperLib\HyperLib\HyperLib\bin\Debug\MySql.Data.dll
+C:\Users\AtjonTV\Source\Repos\HyperLib\HyperLib\HyperLib\obj\Debug\HyperLib.csprojResolveAssemblyReference.cache

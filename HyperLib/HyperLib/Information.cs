@@ -16,6 +16,7 @@ namespace HyperLib
         public static String XmlManagerVersion      { get { return "1.3"; } }
         public static String JsonManagerVersion     { get { return "1.2"; } }
         public static String AmmountVersion         { get { return "1.2"; } }
+        public static String MySQLManagerVersion    { get { return "1.1"; } }
         public static String ChatServerVersion      { get { return "1.0"; } }
         public static String ASCII_CheckVersion     { get { return "1.0"; } }
         public static String BV_VEVersion           { get { return "1.0"; } }
