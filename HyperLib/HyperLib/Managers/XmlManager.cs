@@ -36,6 +36,35 @@ namespace HyperLib.Managers
             doc.Save(file);
         }
 
+        public string Serialize(Type type, object obj)
+        {
+            string tmpDir = Path.GetTempPath() + "\\HyperLib\\Managers\\XmlManager\\Serialize\\";
+            string tmpFile = "tmp_"+DateTime.Now.Year + "~" + DateTime.Now.Hour + "~" + DateTime.Now.Minute + "~" + DateTime.Now.Second + "~" + DateTime.Now.Millisecond + ".xml";
+            Directory.CreateDirectory(tmpDir);
+            SetFile(tmpDir + tmpFile);
+            SerializeToFile(type, obj);
+
+            StreamReader sr = new StreamReader(tmpDir + tmpFile);
+            string content = "";
+            try
+            {
+                content = sr.ReadToEnd();
+            }
+            catch(Exception e)
+            {
+                content = e.Message;
+            }
+
+            return content;
+        }
+
+        public object DeSerialize(Type type, string xml)
+        {
+            XmlSerializer seri = new XmlSerializer(type);
+            StringReader rdr = new StringReader(xml);
+            return seri.Deserialize(rdr);
+        }
+
         public void SerializeToFile(Type type, object obj)
         {
             CheckFile();
