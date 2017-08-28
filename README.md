@@ -1,19 +1,13 @@
 # HyperLib
 HyperLib is a C# .net Framework v4.5.2 Library that contains a collection of usefull functions.
 
-HyperLib v2.5.2 i71 dr1 [Version 2.5.2 ID 71 DevRelease 1] created by AtjonTV
+HyperLib v2.5.2 i71 dr4 [Version 2.5.2 ID 71 DevRelease 4] created by AtjonTV
 
-~94 Functions in ~18 Classes (Files)
+~95 Functions in ~19 Classes (Files)
 
-~70 Hours of Work
+~71 Hours of Work
 
-~1.370 Lines of Code
-
-!INFO!
-
-HyperLib now needs Oracle's "MySql.Data" (MySQL API) to run/ at least for the MySQLManager.
-
-The MySQLManager was not tested before releasing! It might not work.
+~1.390 Lines of Code
 
 # Need help with the Library?
 Just Contact me at admin.atjontv@atvg-studios.at
@@ -32,3 +26,9 @@ I am just learning how to program in C#, so don't expect much from my work.
 Something else i did:
 
 Software Releases: http://www.atvg-studios.at/wp/software
+
+# Info
+
+Feel free to fork and edit HyperLib, just make it your own.
+
+Want to know how to use HyperLib? I made some "Tutorial"/"Showcase" videos, you can watch them on www.YouTube.com/AtjonTVGaming

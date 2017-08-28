@@ -10,7 +10,7 @@ namespace HyperLib
         public static String LibraryVersion         { get { return "2.5.2"; } }
         public static int    LibraryVersionID       { get { return 71; } }
         public static String LibarayReleaseType     { get { return "DevRelease"; } }
-        public static int    LibarayReleaseBuild    { get { return 3; } }
+        public static int    LibarayReleaseBuild    { get { return 4; } }
         public static String RedEngineVersion       { get { return "1.5"; } }
         public static String EasyHashVersion        { get { return "1.5"; } }
         public static String GeneratorVersion       { get { return "1.4"; } }
@@ -31,5 +31,6 @@ namespace HyperLib
         public static String IntegerVersion         { get { return "1.0"; } }
         public static String GeneratorTypeVersion   { get { return "1.0"; } }
         public static String GeneratorCharsetVersion{ get { return "1.0"; } }
+        public static String WebGetVersion          { get { return "1.0"; } }
     }
 }
