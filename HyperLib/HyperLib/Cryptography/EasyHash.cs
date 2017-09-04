@@ -12,6 +12,13 @@ namespace HyperLib.Cryptography
 
         }
 
+        public static string GetMD5Hash(string tohash)
+        {
+            MD5 md = MD5.Create();
+            byte[] cache = md.ComputeHash(Encoding.Unicode.GetBytes(tohash));
+            return Convert.ToBase64String(cache);
+        }
+
 		public static string GetSHA1Hash(byte[] tohash)
 		{
 			SHA1 sha = SHA1.Create();

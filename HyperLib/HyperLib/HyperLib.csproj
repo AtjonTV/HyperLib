@@ -51,13 +51,11 @@
     <Compile Include="Managers\MySQLManager.cs" />
     <Compile Include="Values\Ammount.cs" />
     <Compile Include="ASCII\ASCII.cs" />
-    <Compile Include="ASCII\ASCII_Check.cs" />
     <Compile Include="Objects\BasicVehicle.cs" />
     <Compile Include="Values\Boolean.cs" />
     <Compile Include="Exceptions\BV_ValueException.cs" />
     <Compile Include="Network\ChatServer.cs" />
     <Compile Include="Values\Double.cs" />
-    <Compile Include="Cryptography\EasyCrypt.cs" />
     <Compile Include="Cryptography\EasyHash.cs" />
     <Compile Include="Random\Generator.cs" />
     <Compile Include="Random\GeneratorCharset.cs" />
