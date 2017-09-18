@@ -9,8 +9,8 @@ namespace HyperLib
         public static String LibraryFramework       { get { return ".net Framework 4.5.2"; } }
         public static String LibraryVersion         { get { return "2.5.2"; } }
         public static int    LibraryVersionID       { get { return 71; } }
-        public static String LibarayReleaseType     { get { return "DevRelease"; } }
-        public static int    LibarayReleaseBuild    { get { return 5; } }
+        public static String LibarayReleaseType     { get { return "Release"; } }
+        public static int    LibarayReleaseBuild    { get { return 1; } }
         public static String RedEngineVersion       { get { return "1.5"; } }
         public static String EasyHashVersion        { get { return "1.5"; } }
         public static String GeneratorVersion       { get { return "1.4"; } }
@@ -18,7 +18,7 @@ namespace HyperLib
         public static String XmlManagerVersion      { get { return "1.3"; } }
         public static String JsonManagerVersion     { get { return "1.2"; } }
         public static String AmmountVersion         { get { return "1.2"; } }
-        public static String MySQLManagerVersion    { get { return "1.1"; } }
+        public static String MySQLManagerVersion    { get { return "1.2"; } }
         public static String ChatServerVersion      { get { return "1.0"; } }
         public static String ASCII_CheckVersion     { get { return "1.0"; } }
         public static String BV_VEVersion           { get { return "1.0"; } }

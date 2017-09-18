@@ -30,6 +30,57 @@ namespace HyperLib.Managers
             connection = conn;
         }
 
+        public MySQLManager(string server, string database, string name, string password)
+        {
+            connection = new MySqlConnection(string.Format("Server={0};Database={1};Uid={2};Pwd={3};", server, database, name, password));
+        }
+
+        public Tuple<bool, string> ExecuteQuery(string queryString)
+        {
+            string returning = "";
+            try
+            {
+                MySqlCommand command = connection.CreateCommand();
+                command.CommandText = queryString;
+                MySqlDataReader reader;
+                connection.Open();
+                reader = command.ExecuteReader();
+                while (reader.Read())
+                {
+                    for (int i = 0; i < reader.FieldCount; i++)
+                        returning += reader.GetValue(i).ToString() + ";";
+                }
+                connection.Close();
+            }
+            catch (MySqlException MSE)
+            {
+                return new Tuple<bool, string>(false, MSE.Message);
+            }
+            return new Tuple<bool, string>(true, returning);
+        }
+
+        public Tuple<bool, string> ExecuteCommand(MySqlCommand command)
+        {
+            string returning = "";
+            try
+            {
+                MySqlDataReader reader;
+                connection.Open();
+                reader = command.ExecuteReader();
+                while (reader.Read())
+                {
+                    for (int i = 0; i < reader.FieldCount; i++)
+                        returning += reader.GetValue(i).ToString() + ";";
+                }
+                connection.Close();
+            }
+            catch (MySqlException MSE)
+            {
+                return new Tuple<bool, string>(false, MSE.Message);
+            }
+            return new Tuple<bool, string>(true, returning);
+        }
+
         public Tuple<bool, string> GetValue(string Selection, string From, string Where, string IsEquialTo)
         {
             string returning = "";

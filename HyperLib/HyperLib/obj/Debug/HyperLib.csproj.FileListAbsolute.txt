@@ -21,3 +21,11 @@ C:\Users\AtjonTV\Source\Repos\HyperLib\HyperLib\HyperLib\bin\Debug\MySql.Data.dl
 C:\Users\AtjonTV\Source\Repos\HyperLib\HyperLib\HyperLib\obj\Debug\HyperLib.csprojResolveAssemblyReference.cache
 C:\Users\viuser\Documents\GitHub\HyperLib\HyperLib\HyperLib\bin\Debug\HyperLib.dll.config
 C:\Users\viuser\Documents\GitHub\HyperLib\HyperLib\HyperLib\bin\Debug\MySql.Data.dll
+C:\Users\Hacker\Source\Repos\HyperLib\HyperLib\HyperLib\bin\Debug\HyperLib.dll.config
+C:\Users\Hacker\Source\Repos\HyperLib\HyperLib\HyperLib\bin\Debug\HyperLib.dll
+C:\Users\Hacker\Source\Repos\HyperLib\HyperLib\HyperLib\bin\Debug\HyperLib.pdb
+C:\Users\Hacker\Source\Repos\HyperLib\HyperLib\HyperLib\bin\Debug\MySql.Data.dll
+C:\Users\Hacker\Source\Repos\HyperLib\HyperLib\HyperLib\obj\Debug\HyperLib.csprojResolveAssemblyReference.cache
+C:\Users\Hacker\Source\Repos\HyperLib\HyperLib\HyperLib\obj\Debug\HyperLib.csproj.CoreCompileInputs.cache
+C:\Users\Hacker\Source\Repos\HyperLib\HyperLib\HyperLib\obj\Debug\HyperLib.dll
+C:\Users\Hacker\Source\Repos\HyperLib\HyperLib\HyperLib\obj\Debug\HyperLib.pdb
