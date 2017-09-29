@@ -7,9 +7,9 @@ namespace HyperLib
         public static String LibraryName            { get { return "HyperLib"; } }
         public static String LibraryCreator         { get { return "AtjonTV"; } }
         public static String LibraryFramework       { get { return ".net Framework 4.5.2"; } }
-        public static String LibraryVersion         { get { return "2.5.2"; } }
-        public static int    LibraryVersionID       { get { return 71; } }
-        public static String LibarayReleaseType     { get { return "Release"; } }
+        public static String LibraryVersion         { get { return "2.5.3"; } }
+        public static int    LibraryVersionID       { get { return 72; } }
+        public static String LibarayReleaseType     { get { return "DevBuild"; } }
         public static int    LibarayReleaseBuild    { get { return 1; } }
         public static String RedEngineVersion       { get { return "1.5"; } }
         public static String EasyHashVersion        { get { return "1.5"; } }
@@ -32,5 +32,6 @@ namespace HyperLib
         public static String GeneratorTypeVersion   { get { return "1.0"; } }
         public static String GeneratorCharsetVersion{ get { return "1.0"; } }
         public static String WebGetVersion          { get { return "1.0"; } }
+        public static String AlphabeticCrypt        { get { return "1.0"; } }
     }
 }

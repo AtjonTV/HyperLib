@@ -1,0 +1,15 @@
+﻿<Properties>
+  <MonoDevelop.Ide.Workbench ActiveDocument="Information.cs">
+    <Files>
+      <File FileName="Cryptography/AlphabeticCrypt.cs" Line="10" Column="9" />
+      <File FileName="Information.cs" Line="12" Column="77" />
+    </Files>
+  </MonoDevelop.Ide.Workbench>
+  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
+  <MonoDevelop.Ide.DebuggingService.Breakpoints>
+    <BreakpointStore />
+  </MonoDevelop.Ide.DebuggingService.Breakpoints>
+  <MonoDevelop.Ide.DebuggingService.PinnedWatches />
+  <AuthorInfo Name="AtjonTV" Email="admin.atjontv@atvg-studios.at" Copyright="Copyright 2015-2017 ATVG-Studios" Company="ATVG-Studios" Trademark="Open Source Project License (OSPL)" />
+  <MultiItemStartupConfigurations />
+</Properties>
