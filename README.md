@@ -12,9 +12,13 @@ HyperLib v2.5.2 i71 r1 [Version 2.5.2 ID 71 Release 1] created by AtjonTV
 # Need help with the Library?
 Just Contact me at admin.atjontv@atvg-studios.at
 
-# If you find a mistake in the Code, or have a idea for the Library tell me.
+# Report Bugs or Wishes
 
-Write on GitHub or contect me via E-Mail: admin.atjontv@atvg-studios.at
+You can Report Bugs or add Wishes on our Bugtracker Site:
+
+| URL                               |
+| --------------------------------- |
+| http://bugtracker.atvg-studios.at |
 
 # Who am i?
 
