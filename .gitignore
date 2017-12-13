@@ -1,0 +1,6 @@
+*.sln
+*.userprefs
+/.vs
+/packages
+/HyperLib/bin
+/HyperLib/obj

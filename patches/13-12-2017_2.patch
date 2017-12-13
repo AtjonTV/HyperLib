@@ -1,0 +1,4226 @@
+diff --git a/.gitignore b/.gitignore
+new file mode 100644
+index 0000000..77099bc
+--- /dev/null
++++ b/.gitignore
+@@ -0,0 +1,8 @@
++*.sln
++*.userprefs
++/.vs
++/packages
++/HyperLib/bin
++/HyperLib/obj
++*.patch
++/patches
+\ No newline at end of file
+diff --git a/.vs/HyperLib/v15/.suo b/.vs/HyperLib/v15/.suo
+index d271cd9..42f0a56 100644
+Binary files a/.vs/HyperLib/v15/.suo and b/.vs/HyperLib/v15/.suo differ
+diff --git a/CHANGELOG.md b/CHANGELOG.md
+new file mode 100644
+index 0000000..e69de29
+diff --git a/HyperLib/.vs/HyperLib/v14/.suo b/HyperLib/.vs/HyperLib/v14/.suo
+index 793c967..9705f6a 100644
+Binary files a/HyperLib/.vs/HyperLib/v14/.suo and b/HyperLib/.vs/HyperLib/v14/.suo differ
+diff --git a/HyperLib/.vs/HyperLib/v15/.suo b/HyperLib/.vs/HyperLib/v15/.suo
+deleted file mode 100644
+index 42f0a56..0000000
+Binary files a/HyperLib/.vs/HyperLib/v15/.suo and /dev/null differ
+diff --git a/HyperLib/.vs/HyperLib/v15/sqlite3/storage.ide b/HyperLib/.vs/HyperLib/v15/sqlite3/storage.ide
+deleted file mode 100644
+index f2e08f7..0000000
+Binary files a/HyperLib/.vs/HyperLib/v15/sqlite3/storage.ide and /dev/null differ
+diff --git a/HyperLib/ASCII/ASCII.cs b/HyperLib/ASCII/ASCII.cs
+new file mode 100644
+index 0000000..fb76c9e
+--- /dev/null
++++ b/HyperLib/ASCII/ASCII.cs
+@@ -0,0 +1,48 @@
++﻿using System;
++
++namespace HyperLib.ASCII
++{
++    public class ASCII
++    {
++        //private static char[] CharCache;
++        //private static int[] IntCache;
++
++        public ASCII()
++        {
++            //IntCache = null;
++            //CharCache = null;
++        }
++
++		/* Not Working --
++        private static int[] StringToAscii(String value)
++        {
++            CharCache = value.ToCharArray();
++            for(int i = 0; i < value.Length; i++)
++            {
++                IntCache[i] = CharToAscii(CharCache[i]);
++            }
++            return IntCache;
++        }
++
++        private static string AsciiToString(int[] values)
++        {
++            for(int i = 0; i < values.Length; i++)
++            {
++                CharCache[i] = AsciiToChar(values[i]);
++            }
++            return CharCache.ToString();
++        }
++		*/
++
++        public static int CharToAscii(char value)
++        {
++            return (int)value;
++        }
++
++        public static char AsciiToChar(int value)
++        {
++            return (char)value;
++        }
++
++    }
++}
+diff --git a/HyperLib/Cryptography/AlphabeticCrypt.cs b/HyperLib/Cryptography/AlphabeticCrypt.cs
+new file mode 100644
+index 0000000..2087d8e
+--- /dev/null
++++ b/HyperLib/Cryptography/AlphabeticCrypt.cs
+@@ -0,0 +1,88 @@
++﻿using System.Text;
++
++namespace HyperLib.Cryptography
++{
++    public class AlphabeticCrypt
++    {
++        protected string WebAPI_Str = "http://api.atvg-studios.at/AlphaCrypt/crypt.api.php";
++        protected AlphabeticCryptVersion version = AlphabeticCryptVersion.v2;
++        protected Managers.JsonManager JsonMan = new Managers.JsonManager();
++
++        public string WebAPI { get; set; }
++
++        public AlphabeticCrypt(AlphabeticCryptVersion version)
++        {
++            this.version = version;
++            WebAPI = WebAPI_Str;
++        }
++
++        public AlphabeticCrypt(string WebAPI)
++        {
++            this.WebAPI = WebAPI;
++        }
++
++        public AlphabeticCrypt()
++        {
++        }
++
++        public string Encrypt(bool useWebAPI, string toEncrypt)
++        {
++            if (useWebAPI)
++            {
++                string newRequest = WebAPI + "?ver=" + version.ToString() + "&act=encrypt&str=" + toEncrypt;
++                using (System.Net.WebClient wc = new System.Net.WebClient())
++                {
++                    byte[] response = wc.DownloadData(newRequest);
++                    UTF8Encoding utf = new UTF8Encoding();
++                    string res = utf.GetString(response);
++                    object o = JsonMan.DeSerialize(res, typeof(AlphabeticCryptWebAPI_Response));
++                    AlphabeticCryptWebAPI_Response ACWR = (AlphabeticCryptWebAPI_Response)o;
++                    if (ACWR.Success)
++                        return ACWR.Message;
++                    else
++                        return ACWR.Error;
++                }
++            }
++            else
++                return "Not Implemented";
++        }
++
++		public string Decrypt(bool useWebAPI, string toDecrypt)
++		{
++			if (useWebAPI)
++			{
++				string newRequest = WebAPI + "?ver=" + version.ToString() + "&act=decrypt&str=" + toDecrypt;
++				using (System.Net.WebClient wc = new System.Net.WebClient())
++				{
++					byte[] response = wc.DownloadData(newRequest);
++					UTF8Encoding utf = new UTF8Encoding();
++					string res = utf.GetString(response);
++					object o = JsonMan.DeSerialize(res, typeof(AlphabeticCryptWebAPI_Response));
++					AlphabeticCryptWebAPI_Response ACWR = (AlphabeticCryptWebAPI_Response)o;
++					if (ACWR.Success)
++						return ACWR.Message;
++					else
++						return ACWR.Error;
++				}
++			}
++			else
++				return "Not Implemented";
++		}
++    }
++
++    public enum AlphabeticCryptVersion
++    {
++        v1,
++        v2,
++        v3
++    }
++
++    public class AlphabeticCryptWebAPI_Response
++    {
++        public bool Success { get; set; }
++        public string Message { get; set; }
++        public string Error { get; set; }
++
++        public AlphabeticCryptWebAPI_Response(){}
++    }
++}
+diff --git a/HyperLib/Cryptography/EasyCrypt.cs b/HyperLib/Cryptography/EasyCrypt.cs
+new file mode 100644
+index 0000000..d153514
+--- /dev/null
++++ b/HyperLib/Cryptography/EasyCrypt.cs
+@@ -0,0 +1,13 @@
++﻿using System;
++using System.Collections.Generic;
++using System.Linq;
++using System.Text;
++using System.Threading.Tasks;
++
++namespace HyperLib.Cryptography
++{
++    public class EasyCrypt
++    {
++
++    }
++}
+diff --git a/HyperLib/Cryptography/EasyHash.cs b/HyperLib/Cryptography/EasyHash.cs
+new file mode 100644
+index 0000000..5cc791a
+--- /dev/null
++++ b/HyperLib/Cryptography/EasyHash.cs
+@@ -0,0 +1,106 @@
++﻿using System;
++using System.IO;
++using System.Security.Cryptography;
++using System.Text;
++
++namespace HyperLib.Cryptography
++{
++    public class EasyHash
++    {
++        public EasyHash()
++        {
++
++        }
++
++        public static string GetMD5Hash(string tohash)
++        {
++            MD5 md = MD5.Create();
++            byte[] cache = md.ComputeHash(Encoding.Unicode.GetBytes(tohash));
++            return Convert.ToBase64String(cache);
++        }
++
++		public static string GetSHA1Hash(byte[] tohash)
++		{
++			SHA1 sha = SHA1.Create();
++			byte[] cache = sha.ComputeHash(tohash);
++			return Convert.ToBase64String(cache);
++		}
++
++		public static string GetSHA1Hash(Stream tohash)
++		{
++			SHA1 sha = SHA1.Create();
++			byte[] cache = sha.ComputeHash(tohash);
++			return Convert.ToBase64String(cache);
++		}
++
++        public static string GetSHA1Hash(string tohash)
++        {
++            SHA1 sha = SHA1.Create();
++            byte[] cache = sha.ComputeHash(Encoding.Unicode.GetBytes(tohash));
++            return Convert.ToBase64String(cache);
++        }
++
++        public static string GetSHA256Hash(byte[] tohash)
++		{
++			SHA256 sha = SHA256.Create();
++			byte[] cache = sha.ComputeHash(tohash);
++			return Convert.ToBase64String(cache);
++		}
++
++		public static string GetSHA256Hash(Stream tohash)
++		{
++			SHA256 sha = SHA256.Create();
++			byte[] cache = sha.ComputeHash(tohash);
++			return Convert.ToBase64String(cache);
++		}
++
++        public static string GetSHA256Hash(string tohash)
++        {
++            SHA256 sha = SHA256.Create();
++            byte[] cache = sha.ComputeHash(Encoding.Unicode.GetBytes(tohash));
++            return Convert.ToBase64String(cache);
++        }
++
++        public static string GetSHA384Hash(byte[] tohash)
++		{
++			SHA384 sha = SHA384.Create();
++			byte[] cache = sha.ComputeHash(tohash);
++			return Convert.ToBase64String(cache);
++		}
++
++		public static string GetSHA384Hash(Stream tohash)
++		{
++			SHA384 sha = SHA384.Create();
++			byte[] cache = sha.ComputeHash(tohash);
++			return Convert.ToBase64String(cache);
++		}
++
++        public static string GetSHA384Hash(string tohash)
++        {
++            SHA384 sha = SHA384.Create();
++            byte[] cache = sha.ComputeHash(Encoding.Unicode.GetBytes(tohash));
++            return Convert.ToBase64String(cache);
++        }
++
++        public static string GetSHA512Hash(byte[] tohash)
++		{
++			SHA512 sha = SHA512.Create();
++			byte[] cache = sha.ComputeHash(tohash);
++			return Convert.ToBase64String(cache);
++		}
++
++		public static string GetSHA512Hash(Stream tohash)
++		{
++			SHA512 sha = SHA512.Create();
++			byte[] cache = sha.ComputeHash(tohash);
++			return Convert.ToBase64String(cache);
++		}
++
++        public static string GetSHA512Hash(string tohash)
++        {
++            SHA512 sha = SHA512.Create();
++            byte[] cache = sha.ComputeHash(Encoding.Unicode.GetBytes(tohash));
++            return Convert.ToBase64String(cache);
++        }
++    }
++}
+diff --git a/HyperLib/Exceptions/BV_ValueException.cs b/HyperLib/Exceptions/BV_ValueException.cs
+new file mode 100644
+index 0000000..14a0dd3
+--- /dev/null
++++ b/HyperLib/Exceptions/BV_ValueException.cs
+@@ -0,0 +1,53 @@
++﻿using System;
++
++namespace HyperLib.Exceptions
++{
++    class BV_ValueException:Exception
++    {
++        public BV_ValueException() : base("A value was invalid and can't be used now!")
++        {
++
++        }
++
++        public BV_ValueException(string message) : base(message)
++        {
++
++        }
++    }
++
++    class BV_InvalidBuildDateException : BV_ValueException
++    {
++        public BV_InvalidBuildDateException() : base("The Build date must be over 1886 and before "+DateTime.Now.Year+1+" !")
++        {
++
++        }
++    }
++    class BV_InvalidManufacturerException : BV_ValueException
++    {
++        public BV_InvalidManufacturerException() : base("The Manufacturer can only be written in upper or lower case letters!")
++        {
++
++        }
++    }
++    class BV_InvalidPowerException : BV_ValueException
++    {
++        public BV_InvalidPowerException() : base("The Power can only be over 0 and lower 10.000!")
++        {
++
++        }
++    }
++    class BV_InvalidModellException : BV_ValueException
++    {
++        public BV_InvalidModellException() : base("The Modell can only be written in upper or lower case letters!")
++        {
++
++        }
++    }
++    class BV_InvalidMarkException : BV_ValueException
++    {
++        public BV_InvalidMarkException() : base("The Mark can only be written in this pattern: AB-C123456!")
++        {
++
++        }
++    }
++}
+diff --git a/HyperLib/FileSystem/RedEngine.cs b/HyperLib/FileSystem/RedEngine.cs
+new file mode 100644
+index 0000000..13c396e
+--- /dev/null
++++ b/HyperLib/FileSystem/RedEngine.cs
+@@ -0,0 +1,131 @@
++﻿using HyperLib.Cryptography;
++using System;
++using System.Collections.Generic;
++using System.IO;
++
++namespace HyperLib.FileSystem
++{
++	public class RedEngine
++	{
++		#region Properties
++		private string rootdirectory;
++		private List<string> scannresult = new List<string>();
++
++		public string RootDirectrory
++		{
++			get
++			{
++				return rootdirectory;
++			}
++			set
++			{
++				rootdirectory = value;
++			}
++		}
++
++		public List<string> ScannResult
++		{
++			get
++			{
++				return scannresult;
++			}
++			private set
++			{
++				scannresult = value;
++			}
++		}
++
++		#endregion
++
++		public delegate void scanndone();
++		public event scanndone ScannDone;
++
++		public RedEngine() { }
++
++		public RedEngine(string RootDir)
++		{
++			if(Directory.Exists(RootDir))
++				RootDirectrory = RootDir;
++		}
++
++		/// <summary>
++		/// Runs the hash scann, for all subdirectorys in the root directory
++		/// </summary>
++		/// <param name="RootDir">Root dir.</param>
++		/// <param name="SHA256hash">SHA 256hash.</param>
++		public void RunHashScann(string RootDir, string SHA256hash) 
++		{
++			scann(RootDir, SHA256hash);
++			runSubdir(RootDir, SHA256hash);
++			ScannDone();
++		}
++
++		/// <summary>
++		/// Runs the hash scann, for all subdirectorys in the root directory
++		/// </summary>
++		/// <returns>The scann.</returns>
++		/// <param name="RootDir">Root dir.</param>
++		/// <param name="Sha256Hash">Sha256 hash.</param>
++		public List<string> RunScann(string RootDir, string Sha256Hash)
++		{
++			scann(RootDir, Sha256Hash);
++			runSubdir(RootDir, Sha256Hash);
++			return scannresult;
++		}
++
++		/// <summary>
++		/// Scanns only one directory
++		/// </summary>
++		/// <param name="Dir">Dir.</param>
++		/// <param name="SHA256hash">SHA 256hash.</param>
++		public void ScannOneDir(string Dir, string SHA256hash)
++		{
++			scann(Dir, SHA256hash);
++			ScannDone();
++		}
++
++		/// <summary>
++		/// This scanns a dir and the dirs in it
++		/// </summary>
++		/// <param name="dir">Dir.</param>
++		/// <param name="SHA256hash">SHA 256hash.</param>
++		private void runSubdir(string dir, string SHA256hash)
++		{
++			string[] dirlist = Directory.GetDirectories(dir);
++            foreach (string x in dirlist)
++            {
++				scann(x, SHA256hash);
++				runSubdir(x, SHA256hash);
++            }
++		}
++
++		/// <summary>
++		/// This is the actual scann ..
++		/// </summary>
++		/// <returns>The scann.</returns>
++		/// <param name="ActDir">Act dir.</param>
++		/// <param name="SHAhash">SHA hash.</param>
++		private void scann(string ActDir, string SHAhash)
++		{
++			try
++			{
++				FileStream fs = null;
++				foreach (var file in Directory.GetFiles(ActDir))
++				{
++					fs = new FileStream(file, FileMode.Open, FileAccess.Read);
++					string hash = EasyHash.GetSHA256Hash(fs);
++					if (hash == SHAhash)
++					{
++						scannresult.Add(file);
++					}
++				}
++				if(fs != null)
++					fs.Close();
++			}
++			catch (Exception e)
++			{
++				scannresult.Add(e.Message);
++			}
++		}
++	}
++}
+diff --git a/HyperLib/HyperLib.csproj b/HyperLib/HyperLib.csproj
+new file mode 100644
+index 0000000..7154e70
+--- /dev/null
++++ b/HyperLib/HyperLib.csproj
+@@ -0,0 +1,90 @@
++﻿<?xml version="1.0" encoding="utf-8"?>
++<Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
++  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
++  <PropertyGroup>
++    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
++    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
++    <ProjectGuid>{690A6B6C-C58B-42FD-AEB9-2A22C0CA2893}</ProjectGuid>
++    <OutputType>Library</OutputType>
++    <AppDesignerFolder>Properties</AppDesignerFolder>
++    <RootNamespace>HyperLib</RootNamespace>
++    <AssemblyName>HyperLib</AssemblyName>
++    <TargetFrameworkVersion>v4.6</TargetFrameworkVersion>
++    <FileAlignment>512</FileAlignment>
++    <ReleaseVersion>2.5.3.72</ReleaseVersion>
++    <SynchReleaseVersion>false</SynchReleaseVersion>
++    <Description>HyperLib is a C# .net Framework v4.5.2 Library that contains a collection of usefull functions and classes (also contains a basic Vehicle Object)</Description>
++    <TargetFrameworkProfile />
++  </PropertyGroup>
++  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
++    <DebugSymbols>true</DebugSymbols>
++    <DebugType>full</DebugType>
++    <Optimize>false</Optimize>
++    <OutputPath>bin\Debug\</OutputPath>
++    <DefineConstants>DEBUG;TRACE</DefineConstants>
++    <ErrorReport>prompt</ErrorReport>
++    <WarningLevel>4</WarningLevel>
++  </PropertyGroup>
++  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
++    <DebugType>pdbonly</DebugType>
++    <Optimize>true</Optimize>
++    <OutputPath>bin\Release\</OutputPath>
++    <DefineConstants>TRACE</DefineConstants>
++    <ErrorReport>prompt</ErrorReport>
++    <WarningLevel>4</WarningLevel>
++  </PropertyGroup>
++  <ItemGroup>
++    <Reference Include="MySql.Data, Version=6.9.9.0, Culture=neutral, PublicKeyToken=c5687fc88969c44d, processorArchitecture=MSIL">
++      <HintPath>..\packages\MySql.Data.6.9.9\lib\net45\MySql.Data.dll</HintPath>
++    </Reference>
++    <Reference Include="System" />
++    <Reference Include="System.Core" />
++    <Reference Include="System.Web.Extensions" />
++    <Reference Include="System.Windows.Forms" />
++    <Reference Include="System.Xml.Linq" />
++    <Reference Include="System.Data.DataSetExtensions" />
++    <Reference Include="Microsoft.CSharp" />
++    <Reference Include="System.Data" />
++    <Reference Include="System.Net.Http" />
++    <Reference Include="System.Xml" />
++    <Reference Include="System.Web" />
++  </ItemGroup>
++  <ItemGroup>
++    <Compile Include="Cryptography\EasyCrypt.cs" />
++    <Compile Include="Managers\MySQLManager.cs" />
++    <Compile Include="Values\Ammount.cs" />
++    <Compile Include="ASCII\ASCII.cs" />
++    <Compile Include="Objects\BasicVehicle.cs" />
++    <Compile Include="Values\Boolean.cs" />
++    <Compile Include="Exceptions\BV_ValueException.cs" />
++    <Compile Include="Network\ChatServer.cs" />
++    <Compile Include="Values\Double.cs" />
++    <Compile Include="Cryptography\EasyHash.cs" />
++    <Compile Include="Random\Generator.cs" />
++    <Compile Include="Random\GeneratorCharset.cs" />
++    <Compile Include="Random\GeneratorType.cs" />
++    <Compile Include="Information.cs" />
++    <Compile Include="Values\Integer.cs" />
++    <Compile Include="Values\IntegerSort.cs" />
++    <Compile Include="Managers\JsonManager.cs" />
++    <Compile Include="Values\Letter.cs" />
++    <Compile Include="Properties\AssemblyInfo.cs" />
++    <Compile Include="Managers\XmlManager.cs">
++      <IncludeInPackage>false</IncludeInPackage>
++    </Compile>
++    <Compile Include="FileSystem\RedEngine.cs" />
++    <Compile Include="Cryptography\AlphabeticCrypt.cs" />
++  </ItemGroup>
++  <ItemGroup>
++    <None Include="app.config" />
++    <None Include="packages.config" />
++  </ItemGroup>
++  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
++  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
++       Other similar extension points exist, see Microsoft.Common.targets.
++  <Target Name="BeforeBuild">
++  </Target>
++  <Target Name="AfterBuild">
++  </Target>
++  -->
++</Project>
+\ No newline at end of file
+diff --git a/HyperLib/HyperLib.sln b/HyperLib/HyperLib.sln
+deleted file mode 100644
+index c318f4a..0000000
+--- a/HyperLib/HyperLib.sln
++++ /dev/null
+@@ -1,22 +0,0 @@
+-﻿
+-Microsoft Visual Studio Solution File, Format Version 12.00
+-# Visual Studio 14
+-VisualStudioVersion = 14.0.25420.1
+-MinimumVisualStudioVersion = 10.0.40219.1
+-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HyperLib", "HyperLib\HyperLib.csproj", "{690A6B6C-C58B-42FD-AEB9-2A22C0CA2893}"
+-EndProject
+-Global
+-	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+-		Debug|Any CPU = Debug|Any CPU
+-		Release|Any CPU = Release|Any CPU
+-	EndGlobalSection
+-	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+-		{690A6B6C-C58B-42FD-AEB9-2A22C0CA2893}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+-		{690A6B6C-C58B-42FD-AEB9-2A22C0CA2893}.Debug|Any CPU.Build.0 = Debug|Any CPU
+-		{690A6B6C-C58B-42FD-AEB9-2A22C0CA2893}.Release|Any CPU.ActiveCfg = Release|Any CPU
+-		{690A6B6C-C58B-42FD-AEB9-2A22C0CA2893}.Release|Any CPU.Build.0 = Release|Any CPU
+-	EndGlobalSection
+-	GlobalSection(SolutionProperties) = preSolution
+-		HideSolutionNode = FALSE
+-	EndGlobalSection
+-EndGlobal
+diff --git a/HyperLib/HyperLib.userprefs b/HyperLib/HyperLib.userprefs
+deleted file mode 100644
+index 3986c24..0000000
+--- a/HyperLib/HyperLib.userprefs
++++ /dev/null
+@@ -1,14 +0,0 @@
+-﻿<Properties>
+-  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
+-  <MonoDevelop.Ide.DebuggingService.PinnedWatches />
+-  <MonoDevelop.Ide.DebuggingService.Breakpoints>
+-    <BreakpointStore />
+-  </MonoDevelop.Ide.DebuggingService.Breakpoints>
+-  <MonoDevelop.Ide.Workbench ActiveDocument="HyperLib\Information.cs">
+-    <Files>
+-      <File FileName="HyperLib\Information.cs" Line="11" Column="69" />
+-      <File FileName="HyperLib\RedEngine.cs" Line="103" Column="17" />
+-    </Files>
+-  </MonoDevelop.Ide.Workbench>
+-  <MultiItemStartupConfigurations />
+-</Properties>
+\ No newline at end of file
+diff --git a/HyperLib/HyperLib/ASCII/ASCII.cs b/HyperLib/HyperLib/ASCII/ASCII.cs
+deleted file mode 100644
+index fb76c9e..0000000
+--- a/HyperLib/HyperLib/ASCII/ASCII.cs
++++ /dev/null
+@@ -1,48 +0,0 @@
+-﻿using System;
+-
+-namespace HyperLib.ASCII
+-{
+-    public class ASCII
+-    {
+-        //private static char[] CharCache;
+-        //private static int[] IntCache;
+-
+-        public ASCII()
+-        {
+-            //IntCache = null;
+-            //CharCache = null;
+-        }
+-
+-		/* Not Working --
+-        private static int[] StringToAscii(String value)
+-        {
+-            CharCache = value.ToCharArray();
+-            for(int i = 0; i < value.Length; i++)
+-            {
+-                IntCache[i] = CharToAscii(CharCache[i]);
+-            }
+-            return IntCache;
+-        }
+-
+-        private static string AsciiToString(int[] values)
+-        {
+-            for(int i = 0; i < values.Length; i++)
+-            {
+-                CharCache[i] = AsciiToChar(values[i]);
+-            }
+-            return CharCache.ToString();
+-        }
+-		*/
+-
+-        public static int CharToAscii(char value)
+-        {
+-            return (int)value;
+-        }
+-
+-        public static char AsciiToChar(int value)
+-        {
+-            return (char)value;
+-        }
+-
+-    }
+-}
+diff --git a/HyperLib/HyperLib/Cryptography/AlphabeticCrypt.cs b/HyperLib/HyperLib/Cryptography/AlphabeticCrypt.cs
+deleted file mode 100644
+index 2087d8e..0000000
+--- a/HyperLib/HyperLib/Cryptography/AlphabeticCrypt.cs
++++ /dev/null
+@@ -1,88 +0,0 @@
+-﻿using System.Text;
+-
+-namespace HyperLib.Cryptography
+-{
+-    public class AlphabeticCrypt
+-    {
+-        protected string WebAPI_Str = "http://api.atvg-studios.at/AlphaCrypt/crypt.api.php";
+-        protected AlphabeticCryptVersion version = AlphabeticCryptVersion.v2;
+-        protected Managers.JsonManager JsonMan = new Managers.JsonManager();
+-
+-        public string WebAPI { get; set; }
+-
+-        public AlphabeticCrypt(AlphabeticCryptVersion version)
+-        {
+-            this.version = version;
+-            WebAPI = WebAPI_Str;
+-        }
+-
+-        public AlphabeticCrypt(string WebAPI)
+-        {
+-            this.WebAPI = WebAPI;
+-        }
+-
+-        public AlphabeticCrypt()
+-        {
+-        }
+-
+-        public string Encrypt(bool useWebAPI, string toEncrypt)
+-        {
+-            if (useWebAPI)
+-            {
+-                string newRequest = WebAPI + "?ver=" + version.ToString() + "&act=encrypt&str=" + toEncrypt;
+-                using (System.Net.WebClient wc = new System.Net.WebClient())
+-                {
+-                    byte[] response = wc.DownloadData(newRequest);
+-                    UTF8Encoding utf = new UTF8Encoding();
+-                    string res = utf.GetString(response);
+-                    object o = JsonMan.DeSerialize(res, typeof(AlphabeticCryptWebAPI_Response));
+-                    AlphabeticCryptWebAPI_Response ACWR = (AlphabeticCryptWebAPI_Response)o;
+-                    if (ACWR.Success)
+-                        return ACWR.Message;
+-                    else
+-                        return ACWR.Error;
+-                }
+-            }
+-            else
+-                return "Not Implemented";
+-        }
+-
+-		public string Decrypt(bool useWebAPI, string toDecrypt)
+-		{
+-			if (useWebAPI)
+-			{
+-				string newRequest = WebAPI + "?ver=" + version.ToString() + "&act=decrypt&str=" + toDecrypt;
+-				using (System.Net.WebClient wc = new System.Net.WebClient())
+-				{
+-					byte[] response = wc.DownloadData(newRequest);
+-					UTF8Encoding utf = new UTF8Encoding();
+-					string res = utf.GetString(response);
+-					object o = JsonMan.DeSerialize(res, typeof(AlphabeticCryptWebAPI_Response));
+-					AlphabeticCryptWebAPI_Response ACWR = (AlphabeticCryptWebAPI_Response)o;
+-					if (ACWR.Success)
+-						return ACWR.Message;
+-					else
+-						return ACWR.Error;
+-				}
+-			}
+-			else
+-				return "Not Implemented";
+-		}
+-    }
+-
+-    public enum AlphabeticCryptVersion
+-    {
+-        v1,
+-        v2,
+-        v3
+-    }
+-
+-    public class AlphabeticCryptWebAPI_Response
+-    {
+-        public bool Success { get; set; }
+-        public string Message { get; set; }
+-        public string Error { get; set; }
+-
+-        public AlphabeticCryptWebAPI_Response(){}
+-    }
+-}
+diff --git a/HyperLib/HyperLib/Cryptography/EasyHash.cs b/HyperLib/HyperLib/Cryptography/EasyHash.cs
+deleted file mode 100644
+index 5cc791a..0000000
+--- a/HyperLib/HyperLib/Cryptography/EasyHash.cs
++++ /dev/null
+@@ -1,106 +0,0 @@
+-﻿using System;
+-using System.IO;
+-using System.Security.Cryptography;
+-using System.Text;
+-
+-namespace HyperLib.Cryptography
+-{
+-    public class EasyHash
+-    {
+-        public EasyHash()
+-        {
+-
+-        }
+-
+-        public static string GetMD5Hash(string tohash)
+-        {
+-            MD5 md = MD5.Create();
+-            byte[] cache = md.ComputeHash(Encoding.Unicode.GetBytes(tohash));
+-            return Convert.ToBase64String(cache);
+-        }
+-
+-		public static string GetSHA1Hash(byte[] tohash)
+-		{
+-			SHA1 sha = SHA1.Create();
+-			byte[] cache = sha.ComputeHash(tohash);
+-			return Convert.ToBase64String(cache);
+-		}
+-
+-		public static string GetSHA1Hash(Stream tohash)
+-		{
+-			SHA1 sha = SHA1.Create();
+-			byte[] cache = sha.ComputeHash(tohash);
+-			return Convert.ToBase64String(cache);
+-		}
+-
+-        public static string GetSHA1Hash(string tohash)
+-        {
+-            SHA1 sha = SHA1.Create();
+-            byte[] cache = sha.ComputeHash(Encoding.Unicode.GetBytes(tohash));
+-            return Convert.ToBase64String(cache);
+-        }
+-
+-        public static string GetSHA256Hash(byte[] tohash)
+-		{
+-			SHA256 sha = SHA256.Create();
+-			byte[] cache = sha.ComputeHash(tohash);
+-			return Convert.ToBase64String(cache);
+-		}
+-
+-		public static string GetSHA256Hash(Stream tohash)
+-		{
+-			SHA256 sha = SHA256.Create();
+-			byte[] cache = sha.ComputeHash(tohash);
+-			return Convert.ToBase64String(cache);
+-		}
+-
+-        public static string GetSHA256Hash(string tohash)
+-        {
+-            SHA256 sha = SHA256.Create();
+-            byte[] cache = sha.ComputeHash(Encoding.Unicode.GetBytes(tohash));
+-            return Convert.ToBase64String(cache);
+-        }
+-
+-        public static string GetSHA384Hash(byte[] tohash)
+-		{
+-			SHA384 sha = SHA384.Create();
+-			byte[] cache = sha.ComputeHash(tohash);
+-			return Convert.ToBase64String(cache);
+-		}
+-
+-		public static string GetSHA384Hash(Stream tohash)
+-		{
+-			SHA384 sha = SHA384.Create();
+-			byte[] cache = sha.ComputeHash(tohash);
+-			return Convert.ToBase64String(cache);
+-		}
+-
+-        public static string GetSHA384Hash(string tohash)
+-        {
+-            SHA384 sha = SHA384.Create();
+-            byte[] cache = sha.ComputeHash(Encoding.Unicode.GetBytes(tohash));
+-            return Convert.ToBase64String(cache);
+-        }
+-
+-        public static string GetSHA512Hash(byte[] tohash)
+-		{
+-			SHA512 sha = SHA512.Create();
+-			byte[] cache = sha.ComputeHash(tohash);
+-			return Convert.ToBase64String(cache);
+-		}
+-
+-		public static string GetSHA512Hash(Stream tohash)
+-		{
+-			SHA512 sha = SHA512.Create();
+-			byte[] cache = sha.ComputeHash(tohash);
+-			return Convert.ToBase64String(cache);
+-		}
+-
+-        public static string GetSHA512Hash(string tohash)
+-        {
+-            SHA512 sha = SHA512.Create();
+-            byte[] cache = sha.ComputeHash(Encoding.Unicode.GetBytes(tohash));
+-            return Convert.ToBase64String(cache);
+-        }
+-    }
+-}
+diff --git a/HyperLib/HyperLib/Exceptions/BV_ValueException.cs b/HyperLib/HyperLib/Exceptions/BV_ValueException.cs
+deleted file mode 100644
+index 14a0dd3..0000000
+--- a/HyperLib/HyperLib/Exceptions/BV_ValueException.cs
++++ /dev/null
+@@ -1,53 +0,0 @@
+-﻿using System;
+-
+-namespace HyperLib.Exceptions
+-{
+-    class BV_ValueException:Exception
+-    {
+-        public BV_ValueException() : base("A value was invalid and can't be used now!")
+-        {
+-
+-        }
+-
+-        public BV_ValueException(string message) : base(message)
+-        {
+-
+-        }
+-    }
+-
+-    class BV_InvalidBuildDateException : BV_ValueException
+-    {
+-        public BV_InvalidBuildDateException() : base("The Build date must be over 1886 and before "+DateTime.Now.Year+1+" !")
+-        {
+-
+-        }
+-    }
+-    class BV_InvalidManufacturerException : BV_ValueException
+-    {
+-        public BV_InvalidManufacturerException() : base("The Manufacturer can only be written in upper or lower case letters!")
+-        {
+-
+-        }
+-    }
+-    class BV_InvalidPowerException : BV_ValueException
+-    {
+-        public BV_InvalidPowerException() : base("The Power can only be over 0 and lower 10.000!")
+-        {
+-
+-        }
+-    }
+-    class BV_InvalidModellException : BV_ValueException
+-    {
+-        public BV_InvalidModellException() : base("The Modell can only be written in upper or lower case letters!")
+-        {
+-
+-        }
+-    }
+-    class BV_InvalidMarkException : BV_ValueException
+-    {
+-        public BV_InvalidMarkException() : base("The Mark can only be written in this pattern: AB-C123456!")
+-        {
+-
+-        }
+-    }
+-}
+diff --git a/HyperLib/HyperLib/FileSystem/RedEngine.cs b/HyperLib/HyperLib/FileSystem/RedEngine.cs
+deleted file mode 100644
+index 13c396e..0000000
+--- a/HyperLib/HyperLib/FileSystem/RedEngine.cs
++++ /dev/null
+@@ -1,131 +0,0 @@
+-﻿using HyperLib.Cryptography;
+-using System;
+-using System.Collections.Generic;
+-using System.IO;
+-
+-namespace HyperLib.FileSystem
+-{
+-	public class RedEngine
+-	{
+-		#region Properties
+-		private string rootdirectory;
+-		private List<string> scannresult = new List<string>();
+-
+-		public string RootDirectrory
+-		{
+-			get
+-			{
+-				return rootdirectory;
+-			}
+-			set
+-			{
+-				rootdirectory = value;
+-			}
+-		}
+-
+-		public List<string> ScannResult
+-		{
+-			get
+-			{
+-				return scannresult;
+-			}
+-			private set
+-			{
+-				scannresult = value;
+-			}
+-		}
+-
+-		#endregion
+-
+-		public delegate void scanndone();
+-		public event scanndone ScannDone;
+-
+-		public RedEngine() { }
+-
+-		public RedEngine(string RootDir)
+-		{
+-			if(Directory.Exists(RootDir))
+-				RootDirectrory = RootDir;
+-		}
+-
+-		/// <summary>
+-		/// Runs the hash scann, for all subdirectorys in the root directory
+-		/// </summary>
+-		/// <param name="RootDir">Root dir.</param>
+-		/// <param name="SHA256hash">SHA 256hash.</param>
+-		public void RunHashScann(string RootDir, string SHA256hash) 
+-		{
+-			scann(RootDir, SHA256hash);
+-			runSubdir(RootDir, SHA256hash);
+-			ScannDone();
+-		}
+-
+-		/// <summary>
+-		/// Runs the hash scann, for all subdirectorys in the root directory
+-		/// </summary>
+-		/// <returns>The scann.</returns>
+-		/// <param name="RootDir">Root dir.</param>
+-		/// <param name="Sha256Hash">Sha256 hash.</param>
+-		public List<string> RunScann(string RootDir, string Sha256Hash)
+-		{
+-			scann(RootDir, Sha256Hash);
+-			runSubdir(RootDir, Sha256Hash);
+-			return scannresult;
+-		}
+-
+-		/// <summary>
+-		/// Scanns only one directory
+-		/// </summary>
+-		/// <param name="Dir">Dir.</param>
+-		/// <param name="SHA256hash">SHA 256hash.</param>
+-		public void ScannOneDir(string Dir, string SHA256hash)
+-		{
+-			scann(Dir, SHA256hash);
+-			ScannDone();
+-		}
+-
+-		/// <summary>
+-		/// This scanns a dir and the dirs in it
+-		/// </summary>
+-		/// <param name="dir">Dir.</param>
+-		/// <param name="SHA256hash">SHA 256hash.</param>
+-		private void runSubdir(string dir, string SHA256hash)
+-		{
+-			string[] dirlist = Directory.GetDirectories(dir);
+-            foreach (string x in dirlist)
+-            {
+-				scann(x, SHA256hash);
+-				runSubdir(x, SHA256hash);
+-            }
+-		}
+-
+-		/// <summary>
+-		/// This is the actual scann ..
+-		/// </summary>
+-		/// <returns>The scann.</returns>
+-		/// <param name="ActDir">Act dir.</param>
+-		/// <param name="SHAhash">SHA hash.</param>
+-		private void scann(string ActDir, string SHAhash)
+-		{
+-			try
+-			{
+-				FileStream fs = null;
+-				foreach (var file in Directory.GetFiles(ActDir))
+-				{
+-					fs = new FileStream(file, FileMode.Open, FileAccess.Read);
+-					string hash = EasyHash.GetSHA256Hash(fs);
+-					if (hash == SHAhash)
+-					{
+-						scannresult.Add(file);
+-					}
+-				}
+-				if(fs != null)
+-					fs.Close();
+-			}
+-			catch (Exception e)
+-			{
+-				scannresult.Add(e.Message);
+-			}
+-		}
+-	}
+-}
+diff --git a/HyperLib/HyperLib/HyperLib.csproj b/HyperLib/HyperLib/HyperLib.csproj
+deleted file mode 100644
+index 1c319ae..0000000
+--- a/HyperLib/HyperLib/HyperLib.csproj
++++ /dev/null
+@@ -1,88 +0,0 @@
+-﻿<?xml version="1.0" encoding="utf-8"?>
+-<Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+-  <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
+-  <PropertyGroup>
+-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+-    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+-    <ProjectGuid>{690A6B6C-C58B-42FD-AEB9-2A22C0CA2893}</ProjectGuid>
+-    <OutputType>Library</OutputType>
+-    <AppDesignerFolder>Properties</AppDesignerFolder>
+-    <RootNamespace>HyperLib</RootNamespace>
+-    <AssemblyName>HyperLib</AssemblyName>
+-    <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
+-    <FileAlignment>512</FileAlignment>
+-    <ReleaseVersion>2.5.3.72</ReleaseVersion>
+-    <SynchReleaseVersion>false</SynchReleaseVersion>
+-    <Description>HyperLib is a C# .net Framework v4.5.2 Library that contains a collection of usefull functions and classes (also contains a basic Vehicle Object)</Description>
+-  </PropertyGroup>
+-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+-    <DebugSymbols>true</DebugSymbols>
+-    <DebugType>full</DebugType>
+-    <Optimize>false</Optimize>
+-    <OutputPath>bin\Debug\</OutputPath>
+-    <DefineConstants>DEBUG;TRACE</DefineConstants>
+-    <ErrorReport>prompt</ErrorReport>
+-    <WarningLevel>4</WarningLevel>
+-  </PropertyGroup>
+-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+-    <DebugType>pdbonly</DebugType>
+-    <Optimize>true</Optimize>
+-    <OutputPath>bin\Release\</OutputPath>
+-    <DefineConstants>TRACE</DefineConstants>
+-    <ErrorReport>prompt</ErrorReport>
+-    <WarningLevel>4</WarningLevel>
+-  </PropertyGroup>
+-  <ItemGroup>
+-    <Reference Include="MySql.Data, Version=6.9.9.0, Culture=neutral, PublicKeyToken=c5687fc88969c44d, processorArchitecture=MSIL">
+-      <HintPath>..\packages\MySql.Data.6.9.9\lib\net45\MySql.Data.dll</HintPath>
+-    </Reference>
+-    <Reference Include="System" />
+-    <Reference Include="System.Core" />
+-    <Reference Include="System.Web.Extensions" />
+-    <Reference Include="System.Windows.Forms" />
+-    <Reference Include="System.Xml.Linq" />
+-    <Reference Include="System.Data.DataSetExtensions" />
+-    <Reference Include="Microsoft.CSharp" />
+-    <Reference Include="System.Data" />
+-    <Reference Include="System.Net.Http" />
+-    <Reference Include="System.Xml" />
+-    <Reference Include="System.Web" />
+-  </ItemGroup>
+-  <ItemGroup>
+-    <Compile Include="Managers\MySQLManager.cs" />
+-    <Compile Include="Values\Ammount.cs" />
+-    <Compile Include="ASCII\ASCII.cs" />
+-    <Compile Include="Objects\BasicVehicle.cs" />
+-    <Compile Include="Values\Boolean.cs" />
+-    <Compile Include="Exceptions\BV_ValueException.cs" />
+-    <Compile Include="Network\ChatServer.cs" />
+-    <Compile Include="Values\Double.cs" />
+-    <Compile Include="Cryptography\EasyHash.cs" />
+-    <Compile Include="Random\Generator.cs" />
+-    <Compile Include="Random\GeneratorCharset.cs" />
+-    <Compile Include="Random\GeneratorType.cs" />
+-    <Compile Include="Information.cs" />
+-    <Compile Include="Values\Integer.cs" />
+-    <Compile Include="Values\IntegerSort.cs" />
+-    <Compile Include="Managers\JsonManager.cs" />
+-    <Compile Include="Values\Letter.cs" />
+-    <Compile Include="Properties\AssemblyInfo.cs" />
+-    <Compile Include="Managers\XmlManager.cs">
+-      <IncludeInPackage>false</IncludeInPackage>
+-    </Compile>
+-    <Compile Include="FileSystem\RedEngine.cs" />
+-    <Compile Include="Cryptography\AlphabeticCrypt.cs" />
+-  </ItemGroup>
+-  <ItemGroup>
+-    <None Include="app.config" />
+-    <None Include="packages.config" />
+-  </ItemGroup>
+-  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+-  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+-       Other similar extension points exist, see Microsoft.Common.targets.
+-  <Target Name="BeforeBuild">
+-  </Target>
+-  <Target Name="AfterBuild">
+-  </Target>
+-  -->
+-</Project>
+\ No newline at end of file
+diff --git a/HyperLib/HyperLib/HyperLib.sln b/HyperLib/HyperLib/HyperLib.sln
+deleted file mode 100644
+index cb431aa..0000000
+--- a/HyperLib/HyperLib/HyperLib.sln
++++ /dev/null
+@@ -1,25 +0,0 @@
+-
+-Microsoft Visual Studio Solution File, Format Version 12.00
+-# Visual Studio 2012
+-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "HyperLib", "HyperLib.csproj", "{690A6B6C-C58B-42FD-AEB9-2A22C0CA2893}"
+-EndProject
+-Global
+-	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+-		Debug|Any CPU = Debug|Any CPU
+-		Release|Any CPU = Release|Any CPU
+-	EndGlobalSection
+-	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+-		{690A6B6C-C58B-42FD-AEB9-2A22C0CA2893}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+-		{690A6B6C-C58B-42FD-AEB9-2A22C0CA2893}.Debug|Any CPU.Build.0 = Debug|Any CPU
+-		{690A6B6C-C58B-42FD-AEB9-2A22C0CA2893}.Release|Any CPU.ActiveCfg = Release|Any CPU
+-		{690A6B6C-C58B-42FD-AEB9-2A22C0CA2893}.Release|Any CPU.Build.0 = Release|Any CPU
+-	EndGlobalSection
+-	GlobalSection(MonoDevelopProperties) = preSolution
+-		Policies = $0
+-		$0.DotNetNamingPolicy = $1
+-		$1.DirectoryNamespaceAssociation = PrefixedHierarchical
+-		$0.StandardHeader = $2
+-		$0.VersionControlPolicy = $3
+-		version = 2.5.3.72
+-	EndGlobalSection
+-EndGlobal
+diff --git a/HyperLib/HyperLib/HyperLib.userprefs b/HyperLib/HyperLib/HyperLib.userprefs
+deleted file mode 100644
+index 667caf0..0000000
+--- a/HyperLib/HyperLib/HyperLib.userprefs
++++ /dev/null
+@@ -1,15 +0,0 @@
+-﻿<Properties>
+-  <MonoDevelop.Ide.Workbench ActiveDocument="Information.cs">
+-    <Files>
+-      <File FileName="Cryptography/AlphabeticCrypt.cs" Line="10" Column="9" />
+-      <File FileName="Information.cs" Line="12" Column="77" />
+-    </Files>
+-  </MonoDevelop.Ide.Workbench>
+-  <MonoDevelop.Ide.Workspace ActiveConfiguration="Debug" />
+-  <MonoDevelop.Ide.DebuggingService.Breakpoints>
+-    <BreakpointStore />
+-  </MonoDevelop.Ide.DebuggingService.Breakpoints>
+-  <MonoDevelop.Ide.DebuggingService.PinnedWatches />
+-  <AuthorInfo Name="AtjonTV" Email="admin.atjontv@atvg-studios.at" Copyright="Copyright 2015-2017 ATVG-Studios" Company="ATVG-Studios" Trademark="Open Source Project License (OSPL)" />
+-  <MultiItemStartupConfigurations />
+-</Properties>
+\ No newline at end of file
+diff --git a/HyperLib/HyperLib/Information.cs b/HyperLib/HyperLib/Information.cs
+deleted file mode 100644
+index ae2b075..0000000
+--- a/HyperLib/HyperLib/Information.cs
++++ /dev/null
+@@ -1,37 +0,0 @@
+-﻿using System;
+-
+-namespace HyperLib
+-{
+-    public class Information
+-    {
+-        public static String LibraryName            { get { return "HyperLib"; } }
+-        public static String LibraryCreator         { get { return "AtjonTV"; } }
+-        public static String LibraryFramework       { get { return ".net Framework 4.5.2"; } }
+-        public static String LibraryVersion         { get { return "2.5.3"; } }
+-        public static int    LibraryVersionID       { get { return 72; } }
+-        public static String LibarayReleaseType     { get { return "DevBuild"; } }
+-        public static int    LibarayReleaseBuild    { get { return 1; } }
+-        public static String RedEngineVersion       { get { return "1.5"; } }
+-        public static String EasyHashVersion        { get { return "1.5"; } }
+-        public static String GeneratorVersion       { get { return "1.4"; } }
+-        public static String IntegetSortVersion     { get { return "1.3"; } }
+-        public static String XmlManagerVersion      { get { return "1.3"; } }
+-        public static String JsonManagerVersion     { get { return "1.2"; } }
+-        public static String AmmountVersion         { get { return "1.2"; } }
+-        public static String MySQLManagerVersion    { get { return "1.2"; } }
+-        public static String ChatServerVersion      { get { return "1.0"; } }
+-        public static String ASCII_CheckVersion     { get { return "1.0"; } }
+-        public static String BV_VEVersion           { get { return "1.0"; } }
+-        public static String EasyCryptVersion       { get { return "1.0"; } }
+-        public static String ASCIIVersion           { get { return "1.0"; } }
+-        public static String BasicVehicleVersion    { get { return "1.0"; } }
+-        public static String BooleanVersion         { get { return "1.0"; } }
+-        public static String DoubleVersion          { get { return "1.0"; } }
+-        public static String LetterVersion          { get { return "1.0"; } }
+-        public static String IntegerVersion         { get { return "1.0"; } }
+-        public static String GeneratorTypeVersion   { get { return "1.0"; } }
+-        public static String GeneratorCharsetVersion{ get { return "1.0"; } }
+-        public static String WebGetVersion          { get { return "1.0"; } }
+-        public static String AlphabeticCrypt        { get { return "1.0"; } }
+-    }
+-}
+\ No newline at end of file
+diff --git a/HyperLib/HyperLib/Managers/JsonManager.cs b/HyperLib/HyperLib/Managers/JsonManager.cs
+deleted file mode 100644
+index 082c4d1..0000000
+--- a/HyperLib/HyperLib/Managers/JsonManager.cs
++++ /dev/null
+@@ -1,74 +0,0 @@
+-﻿using System;
+-using System.IO;
+-using System.Web.Script.Serialization;
+-
+-namespace HyperLib.Managers
+-{
+-    public class JsonManager
+-    {
+-        private string file;
+-
+-        public JsonManager()
+-        {
+-
+-        }
+-
+-        public JsonManager(string File)
+-        {
+-            file = File;
+-        }
+-
+-        public void SetFile(string File) { file = File; }
+-        public string GetFile() { return file; }
+-
+-        public void SerializeToFile(object ToSerialize)
+-        {
+-            JavaScriptSerializer JSS = new JavaScriptSerializer();
+-            string json = JSS.Serialize(ToSerialize);
+-
+-            StreamWriter sw = new StreamWriter(file);
+-            try
+-            {
+-                sw.Write(json);
+-                sw.Flush();
+-                sw.Close();
+-            }
+-            catch (IOException)
+-            {
+-            }
+-        }
+-
+-        public string Serialize(object ToSerialize)
+-        {
+-            JavaScriptSerializer JSS = new JavaScriptSerializer();
+-            string json = JSS.Serialize(ToSerialize);
+-            return json;
+-        }
+-
+-        public object DeSerializeFromFile(Type TargetType)
+-        {
+-            JavaScriptSerializer JSS = new JavaScriptSerializer();
+-
+-            StreamReader sr = new StreamReader(file);
+-            string fromfile = "";
+-            try
+-            {
+-                fromfile = sr.ReadToEnd();
+-                sr.Close();
+-            }
+-            catch(IOException)
+-            {
+-            }
+-
+-            object obj = JSS.Deserialize(fromfile, TargetType);
+-            return obj;
+-        }
+-
+-        public object DeSerialize(string JsonString, Type TargetType)
+-        {
+-            JavaScriptSerializer JSS = new JavaScriptSerializer();
+-            object obj = JSS.Deserialize(JsonString, TargetType);
+-            return obj;
+-        }
+-    }
+-}
+diff --git a/HyperLib/HyperLib/Managers/MySQLManager.cs b/HyperLib/HyperLib/Managers/MySQLManager.cs
+deleted file mode 100644
+index 6ac52d8..0000000
+--- a/HyperLib/HyperLib/Managers/MySQLManager.cs
++++ /dev/null
+@@ -1,226 +0,0 @@
+-﻿using MySql.Data.MySqlClient;
+-using System;
+-
+-namespace HyperLib.Managers
+-{
+-    public class MySQLManager
+-    {
+-        MySqlConnection connection;
+-        public MySqlConnection Connection
+-        {
+-            get {
+-                return connection;
+-            }
+-
+-            set {
+-                if (value != null)
+-                {
+-                    connection = value;
+-                }
+-            }
+-        }
+-
+-        public MySQLManager()
+-        {
+-
+-        }
+-
+-        public MySQLManager(MySqlConnection conn)
+-        {
+-            connection = conn;
+-        }
+-
+-        public MySQLManager(string server, string database, string name, string password)
+-        {
+-            connection = new MySqlConnection(string.Format("Server={0};Database={1};Uid={2};Pwd={3};", server, database, name, password));
+-        }
+-
+-        public Tuple<bool, string> ExecuteQuery(string queryString)
+-        {
+-            string returning = "";
+-            try
+-            {
+-                MySqlCommand command = connection.CreateCommand();
+-                command.CommandText = queryString;
+-                MySqlDataReader reader;
+-                connection.Open();
+-                reader = command.ExecuteReader();
+-                while (reader.Read())
+-                {
+-                    for (int i = 0; i < reader.FieldCount; i++)
+-                        returning += reader.GetValue(i).ToString() + ";";
+-                }
+-                connection.Close();
+-            }
+-            catch (MySqlException MSE)
+-            {
+-                return new Tuple<bool, string>(false, MSE.Message);
+-            }
+-            return new Tuple<bool, string>(true, returning);
+-        }
+-
+-        public Tuple<bool, string> ExecuteCommand(MySqlCommand command)
+-        {
+-            string returning = "";
+-            try
+-            {
+-                MySqlDataReader reader;
+-                connection.Open();
+-                reader = command.ExecuteReader();
+-                while (reader.Read())
+-                {
+-                    for (int i = 0; i < reader.FieldCount; i++)
+-                        returning += reader.GetValue(i).ToString() + ";";
+-                }
+-                connection.Close();
+-            }
+-            catch (MySqlException MSE)
+-            {
+-                return new Tuple<bool, string>(false, MSE.Message);
+-            }
+-            return new Tuple<bool, string>(true, returning);
+-        }
+-
+-        public Tuple<bool, string> GetValue(string Selection, string From, string Where, string IsEquialTo)
+-        {
+-            string returning = "";
+-            try
+-            {
+-                MySqlCommand command = connection.CreateCommand();
+-                command.CommandText = "SELECT "+Selection+" FROM "+From+" WHERE "+Where+" = '" + IsEquialTo + "';";
+-                MySqlDataReader reader;
+-                connection.Open();
+-                reader = command.ExecuteReader();
+-                while (reader.Read())
+-                {
+-                    for (int i = 0; i < reader.FieldCount; i++)
+-                        returning += reader.GetValue(i).ToString() + ";";
+-                }
+-                connection.Close();
+-            }
+-            catch (MySqlException MSE)
+-            {
+-                return new Tuple<bool, string>(false, MSE.Message);
+-            }
+-            return new Tuple<bool,string>(true, returning);
+-        }
+-
+-        public Tuple<bool, string> GetValue(string SQL)
+-        {
+-            string returning = "";
+-            try
+-            {
+-                MySqlCommand command = connection.CreateCommand();
+-                command.CommandText = SQL;
+-                MySqlDataReader reader;
+-                connection.Open();
+-                reader = command.ExecuteReader();
+-                while (reader.Read())
+-                {
+-                    for (int i = 0; i < reader.FieldCount; i++)
+-                        returning += reader.GetValue(i).ToString() + ";";
+-                }
+-                connection.Close();
+-            }
+-            catch (MySqlException MSE)
+-            {
+-                return new Tuple<bool, string>(false, MSE.Message);
+-            }
+-            return new Tuple<bool, string>(true, returning);
+-        }
+-
+-        public Tuple<bool, string> GetValue(MySqlCommand command)
+-        {
+-            string returning = "";
+-            try
+-            {
+-                MySqlDataReader reader;
+-                connection.Open();
+-                reader = command.ExecuteReader();
+-                while (reader.Read())
+-                {
+-                    for (int i = 0; i < reader.FieldCount; i++)
+-                        returning += reader.GetValue(i).ToString() + ";";
+-                }
+-                connection.Close();
+-            }
+-            catch (MySqlException MSE)
+-            {
+-                return new Tuple<bool, string>(false, MSE.Message);
+-            }
+-            return new Tuple<bool, string>(true, returning);
+-        }
+-
+-        public Tuple<bool, string> SetValue(string InsertInto, string BuildLike, string InsertThis)
+-        {
+-            try
+-            {
+-                string myInsertQuery = "INSERT INTO " + InsertInto + " " + BuildLike + " VALUES " + InsertThis + ";";
+-                MySqlCommand command = new MySqlCommand(myInsertQuery);
+-                command.Connection = connection;
+-                connection.Open();
+-                command.ExecuteNonQuery();
+-                command.Connection.Close();
+-            }
+-            catch (MySqlException MSE)
+-            {
+-                return new Tuple<bool, string>(false, MSE.Message);
+-            }
+-            return new Tuple<bool, string>(true, "");
+-        }
+-
+-        public Tuple<bool, string> SetValue(string SQL)
+-        {
+-            try
+-            {
+-                string myInsertQuery = SQL;
+-                MySqlCommand command = new MySqlCommand(myInsertQuery);
+-                command.Connection = connection;
+-                connection.Open();
+-                command.ExecuteNonQuery();
+-                command.Connection.Close();
+-            }
+-            catch (MySqlException MSE)
+-            {
+-                return new Tuple<bool, string>(false, MSE.Message);
+-            }
+-            return new Tuple<bool, string>(true, "");
+-        }
+-
+-        public Tuple<bool, string> SetValue(MySqlCommand command)
+-        {
+-            try
+-            {
+-                command.Connection = connection;
+-                connection.Open();
+-                command.ExecuteNonQuery();
+-                command.Connection.Close();
+-            }
+-            catch (MySqlException MSE)
+-            {
+-                return new Tuple<bool, string>(false, MSE.Message);
+-            }
+-            return new Tuple<bool, string>(true, "");
+-        }
+-
+-        public Tuple<bool, Exception> TryConnection()
+-        {
+-            if(connection == null)
+-            {
+-                return new Tuple<bool, Exception>(false, null);
+-            }
+-
+-            try
+-            {
+-                connection.Open();
+-                connection.Close();
+-            }
+-            catch(Exception ex)
+-            {
+-                return new Tuple<bool, Exception>(false, ex);
+-            }
+-
+-            return new Tuple<bool, Exception>(true, null);
+-        }
+-    }
+-}
+diff --git a/HyperLib/HyperLib/Managers/XmlManager.cs b/HyperLib/HyperLib/Managers/XmlManager.cs
+deleted file mode 100644
+index f150567..0000000
+--- a/HyperLib/HyperLib/Managers/XmlManager.cs
++++ /dev/null
+@@ -1,117 +0,0 @@
+-﻿using System;
+-using System.IO;
+-using System.Xml;
+-using System.Xml.Serialization;
+-
+-namespace HyperLib.Managers
+-{
+-    public class XmlManager
+-    {
+-        private XmlDocument doc;
+-        private string file;
+-
+-        public XmlManager()
+-        {
+-
+-        }
+-
+-        public XmlManager(string File)
+-        {
+-            file = File;
+-        }
+-
+-        public void SetFile(string File) { file = File; }
+-        public string GetFile() { return file; }
+-
+-        public string ReadNode(string NodeName)
+-        {
+-            XmlNode node = doc.SelectSingleNode(NodeName);
+-            return node.InnerText;
+-        }
+-
+-        public void WriteNode(string NodeName, string Content)
+-        {
+-            XmlNode node = doc.SelectSingleNode(NodeName);
+-            node.InnerText = Content;
+-            doc.Save(file);
+-        }
+-
+-        public string Serialize(Type type, object obj)
+-        {
+-            string tmpDir = Path.GetTempPath() + "\\HyperLib\\Managers\\XmlManager\\Serialize\\";
+-            string tmpFile = "tmp_"+DateTime.Now.Year + "~" + DateTime.Now.Hour + "~" + DateTime.Now.Minute + "~" + DateTime.Now.Second + "~" + DateTime.Now.Millisecond + ".xml";
+-            Directory.CreateDirectory(tmpDir);
+-            SetFile(tmpDir + tmpFile);
+-            SerializeToFile(type, obj);
+-
+-            StreamReader sr = new StreamReader(tmpDir + tmpFile);
+-            string content = "";
+-            try
+-            {
+-                content = sr.ReadToEnd();
+-            }
+-            catch(Exception e)
+-            {
+-                content = e.Message;
+-            }
+-
+-            return content;
+-        }
+-
+-        public object DeSerialize(Type type, string xml)
+-        {
+-            XmlSerializer seri = new XmlSerializer(type);
+-            StringReader rdr = new StringReader(xml);
+-            return seri.Deserialize(rdr);
+-        }
+-
+-        public void SerializeToFile(Type type, object obj)
+-        {
+-            CheckFile();
+-            FileStream stream = new FileStream(file, FileMode.Open, FileAccess.Write, FileShare.ReadWrite);
+-            XmlSerializer seri = new XmlSerializer(type);
+-            seri.Serialize(stream, obj);
+-            stream.Flush();
+-            stream.Close();
+-            stream.Dispose();
+-        }
+-
+-        public object DeSerializeFromFile(Type type)
+-        {
+-            FileStream stream = new FileStream(file, FileMode.Open);
+-            XmlSerializer seri = new XmlSerializer(type);
+-            object obj = seri.Deserialize(stream);
+-            stream.Close();
+-            return obj;
+-        }
+-
+-        private void CheckFile()
+-        {
+-           if(file != "" && file != null)
+-            {
+-                if (!File.Exists(file))
+-                {
+-                    var myFile = File.Create(file);
+-                    myFile.Close();
+-                    StreamWriter sw = new StreamWriter(file);
+-                    sw.Write("<root></root>");
+-                    sw.Flush();
+-                    sw.Close();
+-                }
+-                else
+-                {
+-                    StreamWriter sw = new StreamWriter(file);
+-                    sw.Write("<root></root>");
+-                    sw.Flush();
+-                    sw.Close();
+-                    doc = new XmlDocument();
+-                    doc.Load(file);
+-                }
+-            }
+-           else
+-            {
+-                throw new Exception("");
+-            }
+-        }
+-    }
+-}
+diff --git a/HyperLib/HyperLib/Network/ChatServer.cs b/HyperLib/HyperLib/Network/ChatServer.cs
+deleted file mode 100644
+index 099fce2..0000000
+--- a/HyperLib/HyperLib/Network/ChatServer.cs
++++ /dev/null
+@@ -1,39 +0,0 @@
+-﻿using System;
+-using System.Collections.Generic;
+-using System.Linq;
+-using System.Net;
+-using System.Net.Sockets;
+-using System.Text;
+-using System.Text.RegularExpressions;
+-using System.Threading.Tasks;
+-
+-namespace HyperLib.Network
+-{
+-    class ChatServer
+-    {
+-        private string ip;
+-        private int port;
+-        private TcpListener server;
+-
+-        public delegate void ClientConnect();
+-        //public event ClientConnect onClientConnect;
+-
+-        public String LocalAdress { get { return ip; }
+-            set {
+-                Regex reg = new Regex(@"^[0-9]{1,3}.[0-9]{1,3}.[0-9]{1,3}.[0-9]{1,3}$");
+-                if (reg.IsMatch(value))
+-                    ip = value;
+-                else
+-                    throw new InvalidOperationException("Wrong format from LocalAdress (IP)");
+-            } }
+-        public int Port { get { return port; } set { port = value; } }
+-        public TcpListener getServer { get { return server; } }
+-
+-        public ChatServer(string locaAdress, int port)
+-        {
+-            ip = locaAdress;
+-            this.port = port;
+-            server = new TcpListener(IPAddress.Parse(ip), port);
+-        }
+-    }
+-}
+diff --git a/HyperLib/HyperLib/Network/WebGet.cs b/HyperLib/HyperLib/Network/WebGet.cs
+deleted file mode 100644
+index 558725d..0000000
+--- a/HyperLib/HyperLib/Network/WebGet.cs
++++ /dev/null
+@@ -1,15 +0,0 @@
+-using System.Net;
+-using System.IO;
+-
+-namespace HyperLib.Network
+-{
+-    class WebGet
+-    {
+-        public static string GetWebContent(string url){
+-            WebClient client = new WebClient();
+-            Stream str = client.OpenRead(url);
+-            StreamReader strr = new StreamReader(str, Encoding.UTF8);
+-            return strr.ReadToEnd();
+-        }
+-    }
+-}
+\ No newline at end of file
+diff --git a/HyperLib/HyperLib/Objects/BasicVehicle.cs b/HyperLib/HyperLib/Objects/BasicVehicle.cs
+deleted file mode 100644
+index 8a947f4..0000000
+--- a/HyperLib/HyperLib/Objects/BasicVehicle.cs
++++ /dev/null
+@@ -1,132 +0,0 @@
+-﻿using HyperLib.Exceptions;
+-using HyperLib.Values;
+-using System;
+-using System.Text.RegularExpressions;
+-
+-namespace HyperLib.Objects
+-{
+-    public class BasicVehicle
+-    {
+-        protected string _manufacturer;
+-        protected string _modell;
+-        protected string _mark;
+-        protected int _builddate;
+-        protected int _power;
+-
+-        public BasicVehicle(string manufacturer, string modell, string mark, int builddate, int power)
+-        {
+-            Regex regTXT = new Regex(@"^[A-Za-z]{3,30}$");
+-            Regex regMRK = new Regex(@"^[A-Z]{1,2}[-][A-Z0-9]{3,7}$");
+-
+-            if (regTXT.IsMatch(manufacturer))
+-                _manufacturer = manufacturer;
+-            else
+-                throw new BV_InvalidManufacturerException();
+-
+-
+-            if (regTXT.IsMatch(modell))
+-                _modell = modell;
+-            else
+-                throw new BV_InvalidModellException();
+-
+-
+-            if (regMRK.IsMatch(mark))
+-                _mark = mark;
+-            else
+-                throw new BV_InvalidMarkException();
+-
+-
+-            if (builddate > 1886 && builddate < DateTime.Now.Year)
+-                _builddate = builddate;
+-            else
+-                throw new BV_InvalidBuildDateException();
+-
+-
+-            if (power > 0 && power <= 10000)
+-                _power = power;
+-            else
+-                throw new BV_InvalidPowerException();
+-        }
+-
+-        public string Manufacturer
+-        {
+-            get
+-            {
+-                return _manufacturer;
+-            }
+-            set
+-            {
+-                if (Letter.areOnlyLetters(value))
+-                    _manufacturer = value;
+-                else
+-                    throw new BV_InvalidManufacturerException();
+-            }
+-        }
+-
+-        public string Modell
+-        {
+-            get
+-            {
+-                return _modell;
+-            }
+-            set
+-            {
+-                if (Letter.areOnlyLetters(value))
+-                    _modell = value;
+-                else
+-                    throw new BV_InvalidModellException();
+-            }
+-        }
+-
+-        public string Mark
+-        {
+-            get
+-            {
+-                return _mark;
+-            }
+-            set
+-            {
+-                Regex regMRK = new Regex(@"^[A-Z]{1,2}[-][A-Z0-9]{3,7}$");
+-                if (regMRK.IsMatch(value))
+-                    _mark = value;
+-                else
+-                    throw new BV_InvalidMarkException();
+-            }
+-        }
+-
+-        public int Builddate
+-        {
+-            get
+-            {
+-                return _builddate;
+-            }
+-            set
+-            {
+-                if (value > 1886 && value < DateTime.Now.Year)
+-                    _builddate = value;
+-                else
+-                    throw new BV_InvalidBuildDateException();
+-            }
+-        }
+-
+-        public int Power
+-        {
+-            get
+-            {
+-                return _power;
+-            }
+-            set
+-            {
+-                if (value > 0 && value <= 10000)
+-                    _power = value;
+-                else
+-                    throw new BV_InvalidPowerException();
+-            }
+-        }
+-
+-        public override string ToString()
+-        {
+-            return "Manufacturer: " + _manufacturer + " , Modell: " + _modell + " , Mark: "+_mark+" , Builddate: " + _builddate + " , Power: " + _power;
+-        }
+-    }
+-}
+diff --git a/HyperLib/HyperLib/Properties/AssemblyInfo.cs b/HyperLib/HyperLib/Properties/AssemblyInfo.cs
+deleted file mode 100644
+index 3a70ecb..0000000
+--- a/HyperLib/HyperLib/Properties/AssemblyInfo.cs
++++ /dev/null
+@@ -1,36 +0,0 @@
+-﻿using System.Reflection;
+-using System.Runtime.CompilerServices;
+-using System.Runtime.InteropServices;
+-
+-// General Information about an assembly is controlled through the following 
+-// set of attributes. Change these attribute values to modify the information
+-// associated with an assembly.
+-[assembly: AssemblyTitle("HyperLib")]
+-[assembly: AssemblyDescription("HyperLib is a C# .net Framework v4.5.2 Library that contains a collection of usefull functions.")]
+-[assembly: AssemblyConfiguration("")]
+-[assembly: AssemblyCompany("ATVG-Studios")]
+-[assembly: AssemblyProduct("Hyper Library")]
+-[assembly: AssemblyCopyright("Copyright © 2017 ATVG-Studios")]
+-[assembly: AssemblyTrademark("ATVG-DevelopmentStudio, Software®")]
+-[assembly: AssemblyCulture("")]
+-
+-// Setting ComVisible to false makes the types in this assembly not visible 
+-// to COM components.  If you need to access a type in this assembly from 
+-// COM, set the ComVisible attribute to true on that type.
+-[assembly: ComVisible(false)]
+-
+-// The following GUID is for the ID of the typelib if this project is exposed to COM
+-[assembly: Guid("690a6b6c-c58b-42fd-aeb9-2a22c0ca2893")]
+-
+-// Version information for an assembly consists of the following four values:
+-//
+-//      Major Version
+-//      Minor Version 
+-//      Build Number
+-//      Revision
+-//
+-// You can specify all the values or you can default the Build and Revision Numbers 
+-// by using the '*' as shown below:
+-// [assembly: AssemblyVersion("1.0.*")]
+-[assembly: AssemblyVersion("2.5.2.71")]
+-[assembly: AssemblyFileVersion("2.5.2.71")]
+diff --git a/HyperLib/HyperLib/Random/Generator.cs b/HyperLib/HyperLib/Random/Generator.cs
+deleted file mode 100644
+index 3faf91c..0000000
+--- a/HyperLib/HyperLib/Random/Generator.cs
++++ /dev/null
+@@ -1,110 +0,0 @@
+-﻿using System;
+-
+-namespace HyperLib.Random
+-{
+-    public class Generator
+-    {
+-        private GeneratorType Type;
+-
+-        public Generator(GeneratorType type)
+-        {
+-            Type = type;
+-        }
+-
+-        public string Generate(GeneratorCharset Charset)
+-        {
+-            if(Charset == GeneratorCharset.All)
+-            {
+-                if (Type == GeneratorType.RandomKey4)
+-                    return genAll(4);
+-                if (Type == GeneratorType.RandomKey8)
+-                    return genAll(8);
+-                if (Type == GeneratorType.RandomKey16)
+-                    return genAll(16);
+-                if (Type == GeneratorType.RandomKey32)
+-                    return genAll(32);
+-                if (Type == GeneratorType.RandomKey64)
+-                    return genAll(64);
+-                if (Type == GeneratorType.RandomKey128)
+-                    return genAll(128);
+-            }
+-
+-            if(Charset == GeneratorCharset.NumbersLowerUpperCase)
+-            {
+-                if (Type == GeneratorType.RandomKey4)
+-                    return genNLU(4);
+-                if (Type == GeneratorType.RandomKey8)
+-                    return genNLU(8);
+-                if (Type == GeneratorType.RandomKey16)
+-                    return genNLU(16);
+-                if (Type == GeneratorType.RandomKey32)
+-                    return genNLU(32);
+-                if (Type == GeneratorType.RandomKey64)
+-                    return genNLU(64);
+-                if (Type == GeneratorType.RandomKey128)
+-                    return genNLU(128);
+-            }
+-
+-            return "An Error Accoured while processing 'GeneratorType' which was given with the Constructor";
+-        }
+-
+-
+-        private string genAll(int length)
+-        {
+-            System.Random rnd = new System.Random();
+-            string key = "";
+-            for (int i = 0; i < (length - 1); i++)
+-            {
+-                int chr = 0;
+-                int rnda = rnd.Next(0, 4);
+-                switch (rnda)
+-                {
+-                    case 0:
+-                        chr = rnd.Next(48, 57);
+-                        key += (char)chr;
+-                        break;
+-                    case 1:
+-                        chr = rnd.Next(65, 90);
+-                        key += (char)chr;
+-                        break;
+-                    case 2:
+-                        chr = rnd.Next(97, 122);
+-                        key += (char)chr;
+-                        break;
+-                    case 3:
+-                        chr = rnd.Next(35, 38);
+-                        key += (char)chr;
+-                        break;
+-                }
+-            }
+-            return key;
+-        }
+-
+-        private string genNLU(int length)
+-        {
+-            System.Random rnd = new System.Random();
+-            string key = "";
+-            for (int i = 0; i < (length - 1); i++)
+-            {
+-                int chr = 0;
+-                int rnda = rnd.Next(0, 3);
+-                switch (rnda)
+-                {
+-                    case 0:
+-                        chr = rnd.Next(48, 57);
+-                        key += (char)chr;
+-                        break;
+-                    case 1:
+-                        chr = rnd.Next(65, 90);
+-                        key += (char)chr;
+-                        break;
+-                    case 2:
+-                        chr = rnd.Next(97, 122);
+-                        key += (char)chr;
+-                        break;
+-                }
+-            }
+-            return key;
+-        }
+-    }
+-}
+\ No newline at end of file
+diff --git a/HyperLib/HyperLib/Random/GeneratorCharset.cs b/HyperLib/HyperLib/Random/GeneratorCharset.cs
+deleted file mode 100644
+index 45ed354..0000000
+--- a/HyperLib/HyperLib/Random/GeneratorCharset.cs
++++ /dev/null
+@@ -1,18 +0,0 @@
+-﻿using System;
+-using System.Collections.Generic;
+-using System.Linq;
+-using System.Text;
+-using System.Threading.Tasks;
+-
+-namespace HyperLib.Random
+-{
+-    public enum GeneratorCharset
+-    {
+-        All,
+-        //NumbersOnly,
+-        //LowercaseOnly,
+-        //UppercaseOnly,
+-        //SpectialChars,
+-        NumbersLowerUpperCase
+-    }
+-}
+diff --git a/HyperLib/HyperLib/Random/GeneratorType.cs b/HyperLib/HyperLib/Random/GeneratorType.cs
+deleted file mode 100644
+index 34bab1c..0000000
+--- a/HyperLib/HyperLib/Random/GeneratorType.cs
++++ /dev/null
+@@ -1,12 +0,0 @@
+-﻿namespace HyperLib.Random
+-{
+-    public enum GeneratorType
+-    {
+-        RandomKey4,
+-        RandomKey8,
+-        RandomKey16,
+-        RandomKey32,
+-        RandomKey64,
+-        RandomKey128
+-    }
+-}
+\ No newline at end of file
+diff --git a/HyperLib/HyperLib/Values/Ammount.cs b/HyperLib/HyperLib/Values/Ammount.cs
+deleted file mode 100644
+index d9604a4..0000000
+--- a/HyperLib/HyperLib/Values/Ammount.cs
++++ /dev/null
+@@ -1,62 +0,0 @@
+-﻿namespace HyperLib.Values
+-{
+-    public class Ammount
+-    {
+-        public Ammount()
+-        {
+-
+-        }
+-
+-        public static bool compareStringArray(string[] values, string comparevalue)
+-        {
+-            foreach(string value in values)
+-            {
+-                if (value.ToLower() == comparevalue.ToLower())
+-                    return true;
+-                else
+-                    return false;
+-            }
+-
+-            return false;
+-        }
+-
+-        public static bool compareIntArray(int[] values, int comparevalue)
+-        {
+-            foreach (int value in values)
+-            {
+-                if (value == comparevalue)
+-                    return true;
+-                else
+-                    return false;
+-            }
+-
+-            return false;
+-        }
+-
+-        public static bool compareByteArray(byte[] values, byte comparevalue)
+-        {
+-            foreach (byte value in values)
+-            {
+-                if (value == comparevalue)
+-                    return true;
+-                else
+-                    return false;
+-            }
+-
+-            return false;
+-        }
+-
+-        public static bool compareBoolArray(bool[] values, bool comparevalue)
+-        {
+-            foreach (bool value in values)
+-            {
+-                if (value == comparevalue)
+-                    return true;
+-                else
+-                    return false;
+-            }
+-
+-            return false;
+-        }
+-    }
+-}
+diff --git a/HyperLib/HyperLib/Values/Boolean.cs b/HyperLib/HyperLib/Values/Boolean.cs
+deleted file mode 100644
+index 7db1ab9..0000000
+--- a/HyperLib/HyperLib/Values/Boolean.cs
++++ /dev/null
+@@ -1,38 +0,0 @@
+-﻿using System;
+-using System.Collections.Generic;
+-
+-namespace HyperLib.Values
+-{
+-    public class Boolean
+-    {
+-        private static bool arebooleans;
+-
+-        public Boolean()
+-        {
+-            arebooleans = true;
+-        }
+-
+-        public static bool isBoolean(String value)
+-        {
+-            if (value == "" || value == null)
+-                return false;
+-
+-            if (value.ToLower() == "true")
+-                return true;
+-            else
+-                return false;
+-        }
+-
+-        public static bool areBooleans(List<String> values)
+-        {
+-            if (values == null)
+-                return false;
+-
+-            foreach (String value in values)
+-            {
+-                if (!isBoolean(value)) arebooleans = false;
+-            }
+-            return arebooleans;
+-        }
+-    }
+-}
+diff --git a/HyperLib/HyperLib/Values/Double.cs b/HyperLib/HyperLib/Values/Double.cs
+deleted file mode 100644
+index 3eb11d9..0000000
+--- a/HyperLib/HyperLib/Values/Double.cs
++++ /dev/null
+@@ -1,53 +0,0 @@
+-﻿using System;
+-using System.Collections.Generic;
+-
+-namespace HyperLib.Values
+-{
+-    public class Double
+-    {
+-        private static bool aredoubles;
+-        private static String[] parts;
+-
+-        public Double()
+-        {
+-            aredoubles = true;
+-            parts = null;
+-        }
+-
+-        public static bool isDouble(String value)
+-        {
+-			if (value != "" && value != null)
+-			{
+-				if (value.Contains("."))
+-				{
+-					parts = value.Split('.');
+-				}
+-				else {
+-					parts = value.Split(',');
+-				}
+-
+-				if (parts.Length != 2)
+-					return false;
+-
+-				if (parts.Length == 2 && Integer.isInteger(parts[0]) && Integer.isInteger(parts[1])) {
+-					return true;
+-				}
+-
+-			}
+-
+-			return false;
+-        }
+-
+-        public static bool areDoubles(List<String> values)
+-        {
+-            if (values == null)
+-                return false;
+-
+-            foreach (String value in values)
+-            {
+-                if(!isDouble(value)) aredoubles = false;
+-            }
+-            return aredoubles;
+-        }
+-    }
+-}
+diff --git a/HyperLib/HyperLib/Values/Integer.cs b/HyperLib/HyperLib/Values/Integer.cs
+deleted file mode 100644
+index 5fa0752..0000000
+--- a/HyperLib/HyperLib/Values/Integer.cs
++++ /dev/null
+@@ -1,41 +0,0 @@
+-﻿using System;
+-using System.Linq;
+-
+-namespace HyperLib.Values
+-{
+-    public class Integer
+-    {
+-        public static bool isInteger(String value)
+-        {
+-            if (value == "" || value == null)
+-                return false;
+-
+-            bool isnumber = true;
+-            char[] numbers = new char[10];
+-            numbers[0] = '0'; numbers[1] = '1';
+-            numbers[2] = '2'; numbers[3] = '3';
+-            numbers[4] = '4'; numbers[5] = '5';
+-            numbers[6] = '6'; numbers[7] = '7';
+-            numbers[8] = '8'; numbers[9] = '9';
+-            if (value == "" && value == null) return false;
+-            foreach (char x in value) { if (numbers.Contains(x)) { } else { isnumber = false; } }
+-            if (isnumber) return true;
+-            else return false;
+-        }
+-
+-        public static bool areIntegers(String[] values)
+-        {
+-            if (values == null)
+-                return false;
+-
+-            bool arenumbers = true;
+-            foreach (String value in values)
+-            {
+-                bool isnumber = isInteger(value);
+-                if (isnumber) { } else arenumbers = false;
+-            }
+-            if (arenumbers) return true;
+-            else return false;
+-        }
+-    }
+-}
+diff --git a/HyperLib/HyperLib/Values/IntegerSort.cs b/HyperLib/HyperLib/Values/IntegerSort.cs
+deleted file mode 100644
+index 0c62ab0..0000000
+--- a/HyperLib/HyperLib/Values/IntegerSort.cs
++++ /dev/null
+@@ -1,91 +0,0 @@
+-﻿namespace HyperLib.Values
+-{
+-    public class IntegerSort
+-    {
+-        public IntegerSort()
+-        {
+-
+-        }
+-
+-        public static int[] bubbleSort(int[] data)
+-        {
+-            bool newLoopNeeded = false;
+-            int temp;
+-            int loop = 0;
+-
+-            while (!newLoopNeeded)
+-            {
+-                newLoopNeeded = true;
+-                for (int i = 0; i < data.Length - 1; i++)
+-                {
+-                    if (data[i + 1] < data[i])
+-                    {
+-                        temp = data[i];
+-                        data[i] = data[i + 1];
+-                        data[i + 1] = temp;
+-                        newLoopNeeded = false;
+-                    }
+-                    loop++;
+-                }
+-            }
+-
+-            return data;
+-        }
+-
+-        public static int[] insertionSort(int[] data)
+-        {
+-            for (int i = 0; i < data.Length - 1; i++)
+-            {
+-                int j = i + 1;
+-
+-                while (j > 0)
+-                {
+-                    if (data[j - 1] > data[j])
+-                    {
+-                        int temp = data[j - 1];
+-                        data[j - 1] = data[j];
+-                        data[j] = temp;
+-
+-                    }
+-                    j--;
+-                }
+-            }
+-            return data;
+-        }
+-
+-        public static int[] quickSort(int[] data, int start, int end)
+-        {
+-            if (start >= end)
+-            {
+-                return data;
+-            }
+-
+-            int num = data[start];
+-
+-            int i = start, j = end;
+-
+-            while (i < j)
+-            {
+-                while (i < j && data[j] > num)
+-                {
+-                    j--;
+-                }
+-
+-                data[i] = data[j];
+-
+-                while (i < j && data[i] < num)
+-                {
+-                    i++;
+-                }
+-
+-                data[j] = data[i];
+-            }
+-
+-            data[i] = num;
+-            quickSort(data, start, i - 1);
+-            quickSort(data, i + 1, end);
+-
+-            return data;
+-        }
+-    }
+-}
+diff --git a/HyperLib/HyperLib/Values/Letter.cs b/HyperLib/HyperLib/Values/Letter.cs
+deleted file mode 100644
+index e01892d..0000000
+--- a/HyperLib/HyperLib/Values/Letter.cs
++++ /dev/null
+@@ -1,39 +0,0 @@
+-﻿using System;
+-using System.Linq;
+-
+-namespace HyperLib.Values
+-{
+-    public class Letter
+-    {
+-        private static bool areonlyletters;
+-        private static char[] lcl = new char[26];
+-
+-        public Letter()
+-        {
+-            areonlyletters = true;
+-            lcl[0] = 'a'; lcl[1] = 'b'; lcl[2] = 'c'; lcl[3] = 'd'; lcl[4] = 'e'; lcl[5] = 'f'; lcl[6] = 'g';
+-            lcl[7] = 'h'; lcl[8] = 'i'; lcl[9] = 'j'; lcl[10] = 'k'; lcl[11] = 'l'; lcl[12] = 'm'; lcl[13] = 'n';
+-            lcl[14] = 'o'; lcl[15] = 'p'; lcl[16] = 'q'; lcl[17] = 'r'; lcl[18] = 's'; lcl[19] = 't'; lcl[20] = 'u';
+-            lcl[21] = 'v'; lcl[22] = 'w'; lcl[23] = 'x'; lcl[24] = 'y'; lcl[25] = 'z';
+-        }
+-
+-        public static bool areOnlyLetters(String value)
+-        {
+-            if (value == "" || value == null)
+-                return false;
+-
+-            foreach (char x in value.ToLower())
+-            {
+-               if(!lcl.Contains(x)) areonlyletters = false;
+-            }
+-
+-            return areonlyletters;
+-        }
+-
+-        public static bool isLetter(char value)
+-        {
+-            if (lcl.Contains(value)) return true;
+-            else return false;
+-        }
+-    }
+-}
+diff --git a/HyperLib/HyperLib/app.config b/HyperLib/HyperLib/app.config
+deleted file mode 100644
+index f627a62..0000000
+--- a/HyperLib/HyperLib/app.config
++++ /dev/null
+@@ -1,9 +0,0 @@
+-﻿<?xml version="1.0" encoding="utf-8"?>
+-<configuration>
+-  <system.data>
+-    <DbProviderFactories>
+-      <remove invariant="MySql.Data.MySqlClient" />
+-      <add name="MySQL Data Provider" invariant="MySql.Data.MySqlClient" description=".Net Framework Data Provider for MySQL" type="MySql.Data.MySqlClient.MySqlClientFactory, MySql.Data, Version=6.9.9.0, Culture=neutral, PublicKeyToken=c5687fc88969c44d" />
+-    </DbProviderFactories>
+-  </system.data>
+-</configuration>
+\ No newline at end of file
+diff --git a/HyperLib/HyperLib/bin/Debug/HyperLib.dll b/HyperLib/HyperLib/bin/Debug/HyperLib.dll
+deleted file mode 100644
+index 6c43120..0000000
+Binary files a/HyperLib/HyperLib/bin/Debug/HyperLib.dll and /dev/null differ
+diff --git a/HyperLib/HyperLib/bin/Debug/HyperLib.dll.config b/HyperLib/HyperLib/bin/Debug/HyperLib.dll.config
+deleted file mode 100644
+index f627a62..0000000
+--- a/HyperLib/HyperLib/bin/Debug/HyperLib.dll.config
++++ /dev/null
+@@ -1,9 +0,0 @@
+-﻿<?xml version="1.0" encoding="utf-8"?>
+-<configuration>
+-  <system.data>
+-    <DbProviderFactories>
+-      <remove invariant="MySql.Data.MySqlClient" />
+-      <add name="MySQL Data Provider" invariant="MySql.Data.MySqlClient" description=".Net Framework Data Provider for MySQL" type="MySql.Data.MySqlClient.MySqlClientFactory, MySql.Data, Version=6.9.9.0, Culture=neutral, PublicKeyToken=c5687fc88969c44d" />
+-    </DbProviderFactories>
+-  </system.data>
+-</configuration>
+\ No newline at end of file
+diff --git a/HyperLib/HyperLib/bin/Debug/HyperLib.pdb b/HyperLib/HyperLib/bin/Debug/HyperLib.pdb
+deleted file mode 100644
+index 46f0c47..0000000
+Binary files a/HyperLib/HyperLib/bin/Debug/HyperLib.pdb and /dev/null differ
+diff --git a/HyperLib/HyperLib/bin/Debug/MySql.Data.dll b/HyperLib/HyperLib/bin/Debug/MySql.Data.dll
+deleted file mode 100644
+index 9abfb6b..0000000
+Binary files a/HyperLib/HyperLib/bin/Debug/MySql.Data.dll and /dev/null differ
+diff --git a/HyperLib/HyperLib/obj/Debug/CoreCompileInputs.cache b/HyperLib/HyperLib/obj/Debug/CoreCompileInputs.cache
+deleted file mode 100644
+index 80d12e0..0000000
+--- a/HyperLib/HyperLib/obj/Debug/CoreCompileInputs.cache
++++ /dev/null
+@@ -1 +0,0 @@
+-e6d31177ff768f3837f3c795e3e6e37d429710a1
+diff --git a/HyperLib/HyperLib/obj/Debug/DesignTimeResolveAssemblyReferencesInput.cache b/HyperLib/HyperLib/obj/Debug/DesignTimeResolveAssemblyReferencesInput.cache
+deleted file mode 100644
+index 49d66c8..0000000
+Binary files a/HyperLib/HyperLib/obj/Debug/DesignTimeResolveAssemblyReferencesInput.cache and /dev/null differ
+diff --git a/HyperLib/HyperLib/obj/Debug/HyperLib.csproj.CopyComplete b/HyperLib/HyperLib/obj/Debug/HyperLib.csproj.CopyComplete
+deleted file mode 100644
+index e69de29..0000000
+diff --git a/HyperLib/HyperLib/obj/Debug/HyperLib.csproj.CoreCompileInputs.cache b/HyperLib/HyperLib/obj/Debug/HyperLib.csproj.CoreCompileInputs.cache
+deleted file mode 100644
+index 0fb0cf1..0000000
+--- a/HyperLib/HyperLib/obj/Debug/HyperLib.csproj.CoreCompileInputs.cache
++++ /dev/null
+@@ -1 +0,0 @@
+-40f3771f572b540ff322ac31f6178c2f6fd768ea
+diff --git a/HyperLib/HyperLib/obj/Debug/HyperLib.csproj.FileListAbsolute.txt b/HyperLib/HyperLib/obj/Debug/HyperLib.csproj.FileListAbsolute.txt
+deleted file mode 100644
+index 86011ad..0000000
+--- a/HyperLib/HyperLib/obj/Debug/HyperLib.csproj.FileListAbsolute.txt
++++ /dev/null
+@@ -1,39 +0,0 @@
+-Y:/Lehrlinge/Gruppe L/Thomas Obernosterer/Software/Library's/HyperLib/HyperLib/bin/Debug/HyperLib.dll
+-Y:/Lehrlinge/Gruppe L/Thomas Obernosterer/Software/Library's/HyperLib/HyperLib/bin/Debug/HyperLib.pdb
+-Y:/Lehrlinge/Gruppe L/Thomas Obernosterer/Software/Library's/HyperLib/HyperLib/obj/Debug/HyperLib.dll
+-Y:/Lehrlinge/Gruppe L/Thomas Obernosterer/Software/Library's/HyperLib/HyperLib/obj/Debug/HyperLib.pdb
+-Y:/Lehrlinge/Gruppe L/Thomas Obernosterer/Software/Library's/HyperLib/HyperLib/obj/Debug/HyperLib.csprojResolveAssemblyReference.cache
+-C:/Users/viuser/Documents/GitHub/HyperLib/HyperLib/HyperLib/obj/Debug/HyperLib.csprojResolveAssemblyReference.cache
+-C:/Users/viuser/Documents/GitHub/HyperLib/HyperLib/HyperLib/obj/Debug/HyperLib.dll
+-C:/Users/viuser/Documents/GitHub/HyperLib/HyperLib/HyperLib/obj/Debug/HyperLib.pdb
+-C:/Users/viuser/Documents/GitHub/HyperLib/HyperLib/HyperLib/bin/Debug/HyperLib.dll
+-C:/Users/viuser/Documents/GitHub/HyperLib/HyperLib/HyperLib/bin/Debug/HyperLib.pdb
+-C:/Users/Developer/Source/Repos/HyperLib/HyperLib/HyperLib/bin/Debug/HyperLib.dll
+-C:/Users/Developer/Source/Repos/HyperLib/HyperLib/HyperLib/bin/Debug/HyperLib.pdb
+-C:/Users/Developer/Source/Repos/HyperLib/HyperLib/HyperLib/obj/Debug/HyperLib.dll
+-C:/Users/Developer/Source/Repos/HyperLib/HyperLib/HyperLib/obj/Debug/HyperLib.pdb
+-C:/Users/AtjonTV/Source/Repos/HyperLib/HyperLib/HyperLib/bin/Debug/HyperLib.dll
+-C:/Users/AtjonTV/Source/Repos/HyperLib/HyperLib/HyperLib/bin/Debug/HyperLib.pdb
+-C:/Users/AtjonTV/Source/Repos/HyperLib/HyperLib/HyperLib/obj/Debug/HyperLib.dll
+-C:/Users/AtjonTV/Source/Repos/HyperLib/HyperLib/HyperLib/obj/Debug/HyperLib.pdb
+-C:/Users/AtjonTV/Source/Repos/HyperLib/HyperLib/HyperLib/bin/Debug/HyperLib.dll.config
+-C:/Users/AtjonTV/Source/Repos/HyperLib/HyperLib/HyperLib/bin/Debug/MySql.Data.dll
+-C:/Users/AtjonTV/Source/Repos/HyperLib/HyperLib/HyperLib/obj/Debug/HyperLib.csprojResolveAssemblyReference.cache
+-C:/Users/viuser/Documents/GitHub/HyperLib/HyperLib/HyperLib/bin/Debug/HyperLib.dll.config
+-C:/Users/viuser/Documents/GitHub/HyperLib/HyperLib/HyperLib/bin/Debug/MySql.Data.dll
+-C:/Users/Hacker/Source/Repos/HyperLib/HyperLib/HyperLib/bin/Debug/HyperLib.dll.config
+-C:/Users/Hacker/Source/Repos/HyperLib/HyperLib/HyperLib/bin/Debug/HyperLib.dll
+-C:/Users/Hacker/Source/Repos/HyperLib/HyperLib/HyperLib/bin/Debug/HyperLib.pdb
+-C:/Users/Hacker/Source/Repos/HyperLib/HyperLib/HyperLib/bin/Debug/MySql.Data.dll
+-C:/Users/Hacker/Source/Repos/HyperLib/HyperLib/HyperLib/obj/Debug/HyperLib.csprojResolveAssemblyReference.cache
+-C:/Users/Hacker/Source/Repos/HyperLib/HyperLib/HyperLib/obj/Debug/HyperLib.csproj.CoreCompileInputs.cache
+-C:/Users/Hacker/Source/Repos/HyperLib/HyperLib/HyperLib/obj/Debug/HyperLib.dll
+-C:/Users/Hacker/Source/Repos/HyperLib/HyperLib/HyperLib/obj/Debug/HyperLib.pdb
+-/home/atjontv/Documents/Csharp/HyperLib/HyperLib/HyperLib/bin/Debug/HyperLib.dll.config
+-/home/atjontv/Documents/Csharp/HyperLib/HyperLib/HyperLib/bin/Debug/HyperLib.dll
+-/home/atjontv/Documents/Csharp/HyperLib/HyperLib/HyperLib/bin/Debug/HyperLib.pdb
+-/home/atjontv/Documents/Csharp/HyperLib/HyperLib/HyperLib/bin/Debug/MySql.Data.dll
+-/home/atjontv/Documents/Csharp/HyperLib/HyperLib/HyperLib/obj/Debug/HyperLib.csprojResolveAssemblyReference.cache
+-/home/atjontv/Documents/Csharp/HyperLib/HyperLib/HyperLib/obj/Debug/HyperLib.csproj.CoreCompileInputs.cache
+-/home/atjontv/Documents/Csharp/HyperLib/HyperLib/HyperLib/obj/Debug/HyperLib.dll
+-/home/atjontv/Documents/Csharp/HyperLib/HyperLib/HyperLib/obj/Debug/HyperLib.pdb
+diff --git a/HyperLib/HyperLib/obj/Debug/HyperLib.csprojResolveAssemblyReference.cache b/HyperLib/HyperLib/obj/Debug/HyperLib.csprojResolveAssemblyReference.cache
+deleted file mode 100644
+index 171e8b0..0000000
+Binary files a/HyperLib/HyperLib/obj/Debug/HyperLib.csprojResolveAssemblyReference.cache and /dev/null differ
+diff --git a/HyperLib/HyperLib/obj/Debug/HyperLib.dll b/HyperLib/HyperLib/obj/Debug/HyperLib.dll
+deleted file mode 100644
+index 6c43120..0000000
+Binary files a/HyperLib/HyperLib/obj/Debug/HyperLib.dll and /dev/null differ
+diff --git a/HyperLib/HyperLib/obj/Debug/HyperLib.pdb b/HyperLib/HyperLib/obj/Debug/HyperLib.pdb
+deleted file mode 100644
+index 46f0c47..0000000
+Binary files a/HyperLib/HyperLib/obj/Debug/HyperLib.pdb and /dev/null differ
+diff --git a/HyperLib/HyperLib/obj/Debug/TemporaryGeneratedFile_036C0B5B-1481-4323-8D20-8F5ADCB23D92.cs b/HyperLib/HyperLib/obj/Debug/TemporaryGeneratedFile_036C0B5B-1481-4323-8D20-8F5ADCB23D92.cs
+deleted file mode 100644
+index e69de29..0000000
+diff --git a/HyperLib/HyperLib/obj/Debug/TemporaryGeneratedFile_5937a670-0e60-4077-877b-f7221da3dda1.cs b/HyperLib/HyperLib/obj/Debug/TemporaryGeneratedFile_5937a670-0e60-4077-877b-f7221da3dda1.cs
+deleted file mode 100644
+index e69de29..0000000
+diff --git a/HyperLib/HyperLib/obj/Debug/TemporaryGeneratedFile_E7A71F73-0F8D-4B9B-B56E-8E70B10BC5D3.cs b/HyperLib/HyperLib/obj/Debug/TemporaryGeneratedFile_E7A71F73-0F8D-4B9B-B56E-8E70B10BC5D3.cs
+deleted file mode 100644
+index e69de29..0000000
+diff --git a/HyperLib/HyperLib/obj/Release/CoreCompileInputs.cache b/HyperLib/HyperLib/obj/Release/CoreCompileInputs.cache
+deleted file mode 100644
+index 23e3ea7..0000000
+--- a/HyperLib/HyperLib/obj/Release/CoreCompileInputs.cache
++++ /dev/null
+@@ -1 +0,0 @@
+-26c75636bf62a901541fc0476d19499c562236dc
+diff --git a/HyperLib/HyperLib/obj/Release/HyperLib.csproj.CoreCompileInputs.cache b/HyperLib/HyperLib/obj/Release/HyperLib.csproj.CoreCompileInputs.cache
+deleted file mode 100644
+index 5d019ef..0000000
+--- a/HyperLib/HyperLib/obj/Release/HyperLib.csproj.CoreCompileInputs.cache
++++ /dev/null
+@@ -1 +0,0 @@
+-76cdb6da0d33f1a1cee0005e2220f8da248afed6
+diff --git a/HyperLib/HyperLib/packages.config b/HyperLib/HyperLib/packages.config
+deleted file mode 100644
+index a759195..0000000
+--- a/HyperLib/HyperLib/packages.config
++++ /dev/null
+@@ -1,4 +0,0 @@
+-﻿<?xml version="1.0" encoding="utf-8"?>
+-<packages>
+-  <package id="MySql.Data" version="6.9.9" targetFramework="net452" />
+-</packages>
+\ No newline at end of file
+diff --git a/HyperLib/HyperLib/packages/MySql.Data.6.9.9/CHANGES b/HyperLib/HyperLib/packages/MySql.Data.6.9.9/CHANGES
+deleted file mode 100644
+index 0a76abd..0000000
+--- a/HyperLib/HyperLib/packages/MySql.Data.6.9.9/CHANGES
++++ /dev/null
+@@ -1,77 +0,0 @@
+-6.9.9
+-- Fix for Nested transactions are not supported in Entity Framework (MySQL Bug #71502, Oracle Bug #22366266).
+-- Fix for EF5 and EF6 wrong SQL statement to set primary key (MySQL Bug 76292, Oracle Bug #20711384) 
+-- Fixed problem where mysql.proc tables would not be used for metadata even though access was available (MySQL Bug #74116, Oracle Bug #20960373)
+-- Added support for TLSv1.1 and TLSv1.2
+-- Fixed Fix for "Aborted connection" (MySQL Bug #80997, Oracle Bug # 23346197).
+-
+-
+-6.9.8
+-- Added support for Chinese character set gb18030. (Oracle bug # 21098546).
+-- Added support for Json type. (WL # 8132).
+-- Added changes for metadata information in generated columns with 5.7 (WL #411)
+-
+-6.9.7
+-- Changed default SSL mode to Preferred in connection string. Now the server connections will be using SSL if server allows it by default but it's possible to override this configuration.
+-- Changed handshake process to use bytes instead of encoded strings.
+-- Fix for Fabric connections (Oracle Bug #20983968).
+-- Fix for Fabric plugin: fabric server selection is broken when master is faulty (Oracle Bug #21203824).
+-
+-
+-6.9.6
+-- Fix for Incorrect query result with Entity Framework 6 (MySql bug #74918, Oracle bug #20129927).
+-- Fix for GetTimeZoneOffset to use date and time to calculate timediff (MySQL Bug #74905, Oracle Bug #20065691).
+-- Fix for MySqlSimpleMembershipProvider keeps database connections open on some operations (MySQL Bug #74662, Oracle Bug #20109419)
+-- Fix for Any Call to RoleExists() returns true whether or not the role exists (MySql bug #75397, Oracle bug #20325391).
+-- Fix for all dateTimes set as UTC Kind (MySQL Bug #74134, Oracle Bug #20200662).
+-- Fix for Invalid SQL query when eager loading two nested collections (MySQL Bug #70941, Oracle bug #18049862).
+-- Fix for chinese characters used in the connection string when connecting to MySql Server (MySQL Bug #70041, Oracle Bug #18141356).
+-
+-
+-
+-6.9.5
+-- Disabled installation on-demand in Installer (Oracle Bug #19670596).
+-- Fix for Generated SQL requests column that doesn't exist in LINQ to Entities (MySql bug #72004, Oracle bug #19681348).
+-- Fix for MySQL Connector/NET generates incorrect SQL for LINQ 'StartsWith' queries (MySql bug #72058, Oracle bug #19680236).
+-- Fix for Exception when using IEnumerable.Contains(model.property) in Where predicate (MySql bug #73643, Oracle bug #19690370).
+-- Fix for Generated Sql does not contain ORDER BY statement whose is requested by LINQ (MySql bug #73549, Oracle bug #19698010).
+-- Fix for Web providers registration in machine.config (removed v20 suffix) (MySQL Bug #74080, Oracle Bug #19715398)
+-- Fix for Error of "Every derived table must have an alias" in LINQ to Entities when using EF6 + DbFirst + View + Take
+-  (MySql Bug #72148, Oracle bug #19356006).
+-- Fix for 'the method or operation is not implemented' when using linq with orderby (MySQL Bug #70722, Oracle Bug #19681723).
+-- Fix for Exception "The given key was not present in the dictionary" when using utf16le charset in a query. (MySql #72737, Oracle Bug #19355906)
+-- Fix for Memory leak in a loop opening a connection to the database and executing a command (MySql Bug #73122, Oracle Bug #19467233).
+-- Fix for Multiple issues caused by trailing and leading white space character in params using MySql Membership Provider (MySql Bug #73411, Oracle Bug #19453313)
+-- Fix for bad assumption leads to modify query adding CALL statement to the beginning of the sql query even when CommandType.Text is specified (MySql Bug #72736, Oracle Bug #19325120).
+-
+-
+-6.9.4
+-- Added a new plugin for MySql Fabric 1.5 support
+-
+-
+-6.9.3
+-- Fix for Web Parts Personalization provider
+-- Fix for changing the PK between two int columns (MySql Bug #71418, Oracle bug #18923294).
+-- Fix for Error when Calling MySqlConnection.GetSchema("PROCEDURES WITH PARAMETERS", ...) (Oracle bug #19285959).
+-- Fix for EF provider reports ManifestProviderToken = 5.6 for server 5.7 (Oracle bug #19453814).
+-- Fix for Fluent API DbModelBuilder.HasColumnType is ignored in EF6 (Oracle bug #19456229).
+-- Fix for Setting a PK GUID identity in Code First in EF6 no longer works in Server 5.7 (Oracle bug #19456452).
+-- Non PKs declared as Identity GUID have no GUID autogenerated (Oracle bug #19456415).
+-
+-
+-6.9.2
+-- Add async/await compatible methods
+-- Fix for Unable to read geometry column when it has been set with a SRID value. (MySql Bug #71869, Oracle Bug #19137999)
+-- Fix for Exception adding a new column to an existing model as identity and PK fails when applying the migration (MySql Bug #71418, Oracle bug #18923294).
+-- Added SiteMap and Personalization configuration web providers to MySql.Web Nuget Package.
+-
+-
+-6.9.1
+-- Fix for Exception of "duplicate entry" in MySqlSessionProvider (MySql Bug #70409, Oracle bug #18657550).
+-
+-
+-6.9.0
+-- Added implementation of MySQLPersonalizationProvider.
+-- Added SiteMap Web provider.
+-- Added Simple Membership Web Provider.
+-- Fix for open sockets connections left when connection open fails, the error happens when the client try to get a connection when the max number of connections is reached in the server. (MySql #72025, Oracle Bug #18665388).
+diff --git a/HyperLib/HyperLib/packages/MySql.Data.6.9.9/MySql.Data.6.9.9.nupkg b/HyperLib/HyperLib/packages/MySql.Data.6.9.9/MySql.Data.6.9.9.nupkg
+deleted file mode 100644
+index a314a13..0000000
+Binary files a/HyperLib/HyperLib/packages/MySql.Data.6.9.9/MySql.Data.6.9.9.nupkg and /dev/null differ
+diff --git a/HyperLib/HyperLib/packages/MySql.Data.6.9.9/Readme.txt b/HyperLib/HyperLib/packages/MySql.Data.6.9.9/Readme.txt
+deleted file mode 100644
+index 0cfde2a..0000000
+--- a/HyperLib/HyperLib/packages/MySql.Data.6.9.9/Readme.txt
++++ /dev/null
+@@ -1,15 +0,0 @@
+-Connector/Net 6.9  Release Notes
+-------------------------------------
+-
+-Welcome to the release notes for Connector/Net 6.9
+-
+-What's new in 6.9
+---------------------
+-
+-- Simple Membership Web Provider
+-- Site Map Web Provider
+-- Personalization Web Provider
+-- MySql Fabric support
+-
+-
+-Be sure and check the documentation for more information on these new features.
+\ No newline at end of file
+diff --git a/HyperLib/HyperLib/packages/MySql.Data.6.9.9/content/app.config.transform b/HyperLib/HyperLib/packages/MySql.Data.6.9.9/content/app.config.transform
+deleted file mode 100644
+index 8b8f83c..0000000
+--- a/HyperLib/HyperLib/packages/MySql.Data.6.9.9/content/app.config.transform
++++ /dev/null
+@@ -1,9 +0,0 @@
+-﻿<?xml version="1.0" encoding="utf-8"?>
+-<configuration>
+-  <system.data>
+-    <DbProviderFactories>
+-      <remove invariant="MySql.Data.MySqlClient" />
+-      <add name="MySQL Data Provider" invariant="MySql.Data.MySqlClient" description=".Net Framework Data Provider for MySQL" type="MySql.Data.MySqlClient.MySqlClientFactory, MySql.Data, Version=6.9.9.0, Culture=neutral, PublicKeyToken=c5687fc88969c44d" />
+-    </DbProviderFactories>
+-  </system.data>
+-</configuration>
+\ No newline at end of file
+diff --git a/HyperLib/HyperLib/packages/MySql.Data.6.9.9/content/web.config.transform b/HyperLib/HyperLib/packages/MySql.Data.6.9.9/content/web.config.transform
+deleted file mode 100644
+index 8b8f83c..0000000
+--- a/HyperLib/HyperLib/packages/MySql.Data.6.9.9/content/web.config.transform
++++ /dev/null
+@@ -1,9 +0,0 @@
+-﻿<?xml version="1.0" encoding="utf-8"?>
+-<configuration>
+-  <system.data>
+-    <DbProviderFactories>
+-      <remove invariant="MySql.Data.MySqlClient" />
+-      <add name="MySQL Data Provider" invariant="MySql.Data.MySqlClient" description=".Net Framework Data Provider for MySQL" type="MySql.Data.MySqlClient.MySqlClientFactory, MySql.Data, Version=6.9.9.0, Culture=neutral, PublicKeyToken=c5687fc88969c44d" />
+-    </DbProviderFactories>
+-  </system.data>
+-</configuration>
+\ No newline at end of file
+diff --git a/HyperLib/HyperLib/packages/MySql.Data.6.9.9/lib/net40/MySql.Data.dll b/HyperLib/HyperLib/packages/MySql.Data.6.9.9/lib/net40/MySql.Data.dll
+deleted file mode 100644
+index c9f344a..0000000
+Binary files a/HyperLib/HyperLib/packages/MySql.Data.6.9.9/lib/net40/MySql.Data.dll and /dev/null differ
+diff --git a/HyperLib/HyperLib/packages/MySql.Data.6.9.9/lib/net45/MySql.Data.dll b/HyperLib/HyperLib/packages/MySql.Data.6.9.9/lib/net45/MySql.Data.dll
+deleted file mode 100644
+index 9abfb6b..0000000
+Binary files a/HyperLib/HyperLib/packages/MySql.Data.6.9.9/lib/net45/MySql.Data.dll and /dev/null differ
+diff --git a/HyperLib/Information.cs b/HyperLib/Information.cs
+new file mode 100644
+index 0000000..e214bb6
+--- /dev/null
++++ b/HyperLib/Information.cs
+@@ -0,0 +1,36 @@
++﻿using System;
++
++namespace HyperLib
++{
++    public class Information
++    {
++        public static String LibraryName            { get { return "HyperLib"; } }
++        public static String LibraryCreator         { get { return "AtjonTV"; } }
++        public static String LibraryFramework       { get { return ".net Framework 4.5.2"; } }
++        public static String LibraryVersion         { get { return "2.5.3"; } }
++        public static int LibraryVersionID          { get { return 73;      } }
++        public static String RedEngineVersion       { get { return "1.5"; } }
++        public static String EasyHashVersion        { get { return "1.5"; } }
++        public static String GeneratorVersion       { get { return "1.4"; } }
++        public static String IntegetSortVersion     { get { return "1.3"; } }
++        public static String XmlManagerVersion      { get { return "1.3"; } }
++        public static String JsonManagerVersion     { get { return "1.2"; } }
++        public static String AmmountVersion         { get { return "1.2"; } }
++        public static String MySQLManagerVersion    { get { return "1.2"; } }
++        public static String ChatServerVersion      { get { return "1.0"; } }
++        public static String ASCII_CheckVersion     { get { return "1.0"; } }
++        public static String BV_VEVersion           { get { return "1.0"; } }
++        public static String EasyCryptVersion       { get { return "1.0"; } }
++        public static String ASCIIVersion           { get { return "1.0"; } }
++        public static String BasicVehicleVersion    { get { return "1.0"; } }
++        public static String BooleanVersion         { get { return "1.0"; } }
++        public static String DoubleVersion          { get { return "1.0"; } }
++        public static String LetterVersion          { get { return "1.0"; } }
++        public static String IntegerVersion         { get { return "1.0"; } }
++        public static String GeneratorTypeVersion   { get { return "1.0"; } }
++        public static String GeneratorCharsetVersion{ get { return "1.0"; } }
++        public static String WebGetVersion          { get { return "1.0"; } }
++        public static String AlphabeticCrypt        { get { return "1.0"; } }
++        public static String EasyCrypt              { get { return "1.0"; } }
++    }
++}
+\ No newline at end of file
+diff --git a/HyperLib/Managers/JsonManager.cs b/HyperLib/Managers/JsonManager.cs
+new file mode 100644
+index 0000000..082c4d1
+--- /dev/null
++++ b/HyperLib/Managers/JsonManager.cs
+@@ -0,0 +1,74 @@
++﻿using System;
++using System.IO;
++using System.Web.Script.Serialization;
++
++namespace HyperLib.Managers
++{
++    public class JsonManager
++    {
++        private string file;
++
++        public JsonManager()
++        {
++
++        }
++
++        public JsonManager(string File)
++        {
++            file = File;
++        }
++
++        public void SetFile(string File) { file = File; }
++        public string GetFile() { return file; }
++
++        public void SerializeToFile(object ToSerialize)
++        {
++            JavaScriptSerializer JSS = new JavaScriptSerializer();
++            string json = JSS.Serialize(ToSerialize);
++
++            StreamWriter sw = new StreamWriter(file);
++            try
++            {
++                sw.Write(json);
++                sw.Flush();
++                sw.Close();
++            }
++            catch (IOException)
++            {
++            }
++        }
++
++        public string Serialize(object ToSerialize)
++        {
++            JavaScriptSerializer JSS = new JavaScriptSerializer();
++            string json = JSS.Serialize(ToSerialize);
++            return json;
++        }
++
++        public object DeSerializeFromFile(Type TargetType)
++        {
++            JavaScriptSerializer JSS = new JavaScriptSerializer();
++
++            StreamReader sr = new StreamReader(file);
++            string fromfile = "";
++            try
++            {
++                fromfile = sr.ReadToEnd();
++                sr.Close();
++            }
++            catch(IOException)
++            {
++            }
++
++            object obj = JSS.Deserialize(fromfile, TargetType);
++            return obj;
++        }
++
++        public object DeSerialize(string JsonString, Type TargetType)
++        {
++            JavaScriptSerializer JSS = new JavaScriptSerializer();
++            object obj = JSS.Deserialize(JsonString, TargetType);
++            return obj;
++        }
++    }
++}
+diff --git a/HyperLib/Managers/MySQLManager.cs b/HyperLib/Managers/MySQLManager.cs
+new file mode 100644
+index 0000000..6ac52d8
+--- /dev/null
++++ b/HyperLib/Managers/MySQLManager.cs
+@@ -0,0 +1,226 @@
++﻿using MySql.Data.MySqlClient;
++using System;
++
++namespace HyperLib.Managers
++{
++    public class MySQLManager
++    {
++        MySqlConnection connection;
++        public MySqlConnection Connection
++        {
++            get {
++                return connection;
++            }
++
++            set {
++                if (value != null)
++                {
++                    connection = value;
++                }
++            }
++        }
++
++        public MySQLManager()
++        {
++
++        }
++
++        public MySQLManager(MySqlConnection conn)
++        {
++            connection = conn;
++        }
++
++        public MySQLManager(string server, string database, string name, string password)
++        {
++            connection = new MySqlConnection(string.Format("Server={0};Database={1};Uid={2};Pwd={3};", server, database, name, password));
++        }
++
++        public Tuple<bool, string> ExecuteQuery(string queryString)
++        {
++            string returning = "";
++            try
++            {
++                MySqlCommand command = connection.CreateCommand();
++                command.CommandText = queryString;
++                MySqlDataReader reader;
++                connection.Open();
++                reader = command.ExecuteReader();
++                while (reader.Read())
++                {
++                    for (int i = 0; i < reader.FieldCount; i++)
++                        returning += reader.GetValue(i).ToString() + ";";
++                }
++                connection.Close();
++            }
++            catch (MySqlException MSE)
++            {
++                return new Tuple<bool, string>(false, MSE.Message);
++            }
++            return new Tuple<bool, string>(true, returning);
++        }
++
++        public Tuple<bool, string> ExecuteCommand(MySqlCommand command)
++        {
++            string returning = "";
++            try
++            {
++                MySqlDataReader reader;
++                connection.Open();
++                reader = command.ExecuteReader();
++                while (reader.Read())
++                {
++                    for (int i = 0; i < reader.FieldCount; i++)
++                        returning += reader.GetValue(i).ToString() + ";";
++                }
++                connection.Close();
++            }
++            catch (MySqlException MSE)
++            {
++                return new Tuple<bool, string>(false, MSE.Message);
++            }
++            return new Tuple<bool, string>(true, returning);
++        }
++
++        public Tuple<bool, string> GetValue(string Selection, string From, string Where, string IsEquialTo)
++        {
++            string returning = "";
++            try
++            {
++                MySqlCommand command = connection.CreateCommand();
++                command.CommandText = "SELECT "+Selection+" FROM "+From+" WHERE "+Where+" = '" + IsEquialTo + "';";
++                MySqlDataReader reader;
++                connection.Open();
++                reader = command.ExecuteReader();
++                while (reader.Read())
++                {
++                    for (int i = 0; i < reader.FieldCount; i++)
++                        returning += reader.GetValue(i).ToString() + ";";
++                }
++                connection.Close();
++            }
++            catch (MySqlException MSE)
++            {
++                return new Tuple<bool, string>(false, MSE.Message);
++            }
++            return new Tuple<bool,string>(true, returning);
++        }
++
++        public Tuple<bool, string> GetValue(string SQL)
++        {
++            string returning = "";
++            try
++            {
++                MySqlCommand command = connection.CreateCommand();
++                command.CommandText = SQL;
++                MySqlDataReader reader;
++                connection.Open();
++                reader = command.ExecuteReader();
++                while (reader.Read())
++                {
++                    for (int i = 0; i < reader.FieldCount; i++)
++                        returning += reader.GetValue(i).ToString() + ";";
++                }
++                connection.Close();
++            }
++            catch (MySqlException MSE)
++            {
++                return new Tuple<bool, string>(false, MSE.Message);
++            }
++            return new Tuple<bool, string>(true, returning);
++        }
++
++        public Tuple<bool, string> GetValue(MySqlCommand command)
++        {
++            string returning = "";
++            try
++            {
++                MySqlDataReader reader;
++                connection.Open();
++                reader = command.ExecuteReader();
++                while (reader.Read())
++                {
++                    for (int i = 0; i < reader.FieldCount; i++)
++                        returning += reader.GetValue(i).ToString() + ";";
++                }
++                connection.Close();
++            }
++            catch (MySqlException MSE)
++            {
++                return new Tuple<bool, string>(false, MSE.Message);
++            }
++            return new Tuple<bool, string>(true, returning);
++        }
++
++        public Tuple<bool, string> SetValue(string InsertInto, string BuildLike, string InsertThis)
++        {
++            try
++            {
++                string myInsertQuery = "INSERT INTO " + InsertInto + " " + BuildLike + " VALUES " + InsertThis + ";";
++                MySqlCommand command = new MySqlCommand(myInsertQuery);
++                command.Connection = connection;
++                connection.Open();
++                command.ExecuteNonQuery();
++                command.Connection.Close();
++            }
++            catch (MySqlException MSE)
++            {
++                return new Tuple<bool, string>(false, MSE.Message);
++            }
++            return new Tuple<bool, string>(true, "");
++        }
++
++        public Tuple<bool, string> SetValue(string SQL)
++        {
++            try
++            {
++                string myInsertQuery = SQL;
++                MySqlCommand command = new MySqlCommand(myInsertQuery);
++                command.Connection = connection;
++                connection.Open();
++                command.ExecuteNonQuery();
++                command.Connection.Close();
++            }
++            catch (MySqlException MSE)
++            {
++                return new Tuple<bool, string>(false, MSE.Message);
++            }
++            return new Tuple<bool, string>(true, "");
++        }
++
++        public Tuple<bool, string> SetValue(MySqlCommand command)
++        {
++            try
++            {
++                command.Connection = connection;
++                connection.Open();
++                command.ExecuteNonQuery();
++                command.Connection.Close();
++            }
++            catch (MySqlException MSE)
++            {
++                return new Tuple<bool, string>(false, MSE.Message);
++            }
++            return new Tuple<bool, string>(true, "");
++        }
++
++        public Tuple<bool, Exception> TryConnection()
++        {
++            if(connection == null)
++            {
++                return new Tuple<bool, Exception>(false, null);
++            }
++
++            try
++            {
++                connection.Open();
++                connection.Close();
++            }
++            catch(Exception ex)
++            {
++                return new Tuple<bool, Exception>(false, ex);
++            }
++
++            return new Tuple<bool, Exception>(true, null);
++        }
++    }
++}
+diff --git a/HyperLib/Managers/XmlManager.cs b/HyperLib/Managers/XmlManager.cs
+new file mode 100644
+index 0000000..f150567
+--- /dev/null
++++ b/HyperLib/Managers/XmlManager.cs
+@@ -0,0 +1,117 @@
++﻿using System;
++using System.IO;
++using System.Xml;
++using System.Xml.Serialization;
++
++namespace HyperLib.Managers
++{
++    public class XmlManager
++    {
++        private XmlDocument doc;
++        private string file;
++
++        public XmlManager()
++        {
++
++        }
++
++        public XmlManager(string File)
++        {
++            file = File;
++        }
++
++        public void SetFile(string File) { file = File; }
++        public string GetFile() { return file; }
++
++        public string ReadNode(string NodeName)
++        {
++            XmlNode node = doc.SelectSingleNode(NodeName);
++            return node.InnerText;
++        }
++
++        public void WriteNode(string NodeName, string Content)
++        {
++            XmlNode node = doc.SelectSingleNode(NodeName);
++            node.InnerText = Content;
++            doc.Save(file);
++        }
++
++        public string Serialize(Type type, object obj)
++        {
++            string tmpDir = Path.GetTempPath() + "\\HyperLib\\Managers\\XmlManager\\Serialize\\";
++            string tmpFile = "tmp_"+DateTime.Now.Year + "~" + DateTime.Now.Hour + "~" + DateTime.Now.Minute + "~" + DateTime.Now.Second + "~" + DateTime.Now.Millisecond + ".xml";
++            Directory.CreateDirectory(tmpDir);
++            SetFile(tmpDir + tmpFile);
++            SerializeToFile(type, obj);
++
++            StreamReader sr = new StreamReader(tmpDir + tmpFile);
++            string content = "";
++            try
++            {
++                content = sr.ReadToEnd();
++            }
++            catch(Exception e)
++            {
++                content = e.Message;
++            }
++
++            return content;
++        }
++
++        public object DeSerialize(Type type, string xml)
++        {
++            XmlSerializer seri = new XmlSerializer(type);
++            StringReader rdr = new StringReader(xml);
++            return seri.Deserialize(rdr);
++        }
++
++        public void SerializeToFile(Type type, object obj)
++        {
++            CheckFile();
++            FileStream stream = new FileStream(file, FileMode.Open, FileAccess.Write, FileShare.ReadWrite);
++            XmlSerializer seri = new XmlSerializer(type);
++            seri.Serialize(stream, obj);
++            stream.Flush();
++            stream.Close();
++            stream.Dispose();
++        }
++
++        public object DeSerializeFromFile(Type type)
++        {
++            FileStream stream = new FileStream(file, FileMode.Open);
++            XmlSerializer seri = new XmlSerializer(type);
++            object obj = seri.Deserialize(stream);
++            stream.Close();
++            return obj;
++        }
++
++        private void CheckFile()
++        {
++           if(file != "" && file != null)
++            {
++                if (!File.Exists(file))
++                {
++                    var myFile = File.Create(file);
++                    myFile.Close();
++                    StreamWriter sw = new StreamWriter(file);
++                    sw.Write("<root></root>");
++                    sw.Flush();
++                    sw.Close();
++                }
++                else
++                {
++                    StreamWriter sw = new StreamWriter(file);
++                    sw.Write("<root></root>");
++                    sw.Flush();
++                    sw.Close();
++                    doc = new XmlDocument();
++                    doc.Load(file);
++                }
++            }
++           else
++            {
++                throw new Exception("");
++            }
++        }
++    }
++}
+diff --git a/HyperLib/Network/ChatServer.cs b/HyperLib/Network/ChatServer.cs
+new file mode 100644
+index 0000000..099fce2
+--- /dev/null
++++ b/HyperLib/Network/ChatServer.cs
+@@ -0,0 +1,39 @@
++﻿using System;
++using System.Collections.Generic;
++using System.Linq;
++using System.Net;
++using System.Net.Sockets;
++using System.Text;
++using System.Text.RegularExpressions;
++using System.Threading.Tasks;
++
++namespace HyperLib.Network
++{
++    class ChatServer
++    {
++        private string ip;
++        private int port;
++        private TcpListener server;
++
++        public delegate void ClientConnect();
++        //public event ClientConnect onClientConnect;
++
++        public String LocalAdress { get { return ip; }
++            set {
++                Regex reg = new Regex(@"^[0-9]{1,3}.[0-9]{1,3}.[0-9]{1,3}.[0-9]{1,3}$");
++                if (reg.IsMatch(value))
++                    ip = value;
++                else
++                    throw new InvalidOperationException("Wrong format from LocalAdress (IP)");
++            } }
++        public int Port { get { return port; } set { port = value; } }
++        public TcpListener getServer { get { return server; } }
++
++        public ChatServer(string locaAdress, int port)
++        {
++            ip = locaAdress;
++            this.port = port;
++            server = new TcpListener(IPAddress.Parse(ip), port);
++        }
++    }
++}
+diff --git a/HyperLib/Network/WebGet.cs b/HyperLib/Network/WebGet.cs
+new file mode 100644
+index 0000000..558725d
+--- /dev/null
++++ b/HyperLib/Network/WebGet.cs
+@@ -0,0 +1,15 @@
++using System.Net;
++using System.IO;
++
++namespace HyperLib.Network
++{
++    class WebGet
++    {
++        public static string GetWebContent(string url){
++            WebClient client = new WebClient();
++            Stream str = client.OpenRead(url);
++            StreamReader strr = new StreamReader(str, Encoding.UTF8);
++            return strr.ReadToEnd();
++        }
++    }
++}
+\ No newline at end of file
+diff --git a/HyperLib/Objects/BasicVehicle.cs b/HyperLib/Objects/BasicVehicle.cs
+new file mode 100644
+index 0000000..8a947f4
+--- /dev/null
++++ b/HyperLib/Objects/BasicVehicle.cs
+@@ -0,0 +1,132 @@
++﻿using HyperLib.Exceptions;
++using HyperLib.Values;
++using System;
++using System.Text.RegularExpressions;
++
++namespace HyperLib.Objects
++{
++    public class BasicVehicle
++    {
++        protected string _manufacturer;
++        protected string _modell;
++        protected string _mark;
++        protected int _builddate;
++        protected int _power;
++
++        public BasicVehicle(string manufacturer, string modell, string mark, int builddate, int power)
++        {
++            Regex regTXT = new Regex(@"^[A-Za-z]{3,30}$");
++            Regex regMRK = new Regex(@"^[A-Z]{1,2}[-][A-Z0-9]{3,7}$");
++
++            if (regTXT.IsMatch(manufacturer))
++                _manufacturer = manufacturer;
++            else
++                throw new BV_InvalidManufacturerException();
++
++
++            if (regTXT.IsMatch(modell))
++                _modell = modell;
++            else
++                throw new BV_InvalidModellException();
++
++
++            if (regMRK.IsMatch(mark))
++                _mark = mark;
++            else
++                throw new BV_InvalidMarkException();
++
++
++            if (builddate > 1886 && builddate < DateTime.Now.Year)
++                _builddate = builddate;
++            else
++                throw new BV_InvalidBuildDateException();
++
++
++            if (power > 0 && power <= 10000)
++                _power = power;
++            else
++                throw new BV_InvalidPowerException();
++        }
++
++        public string Manufacturer
++        {
++            get
++            {
++                return _manufacturer;
++            }
++            set
++            {
++                if (Letter.areOnlyLetters(value))
++                    _manufacturer = value;
++                else
++                    throw new BV_InvalidManufacturerException();
++            }
++        }
++
++        public string Modell
++        {
++            get
++            {
++                return _modell;
++            }
++            set
++            {
++                if (Letter.areOnlyLetters(value))
++                    _modell = value;
++                else
++                    throw new BV_InvalidModellException();
++            }
++        }
++
++        public string Mark
++        {
++            get
++            {
++                return _mark;
++            }
++            set
++            {
++                Regex regMRK = new Regex(@"^[A-Z]{1,2}[-][A-Z0-9]{3,7}$");
++                if (regMRK.IsMatch(value))
++                    _mark = value;
++                else
++                    throw new BV_InvalidMarkException();
++            }
++        }
++
++        public int Builddate
++        {
++            get
++            {
++                return _builddate;
++            }
++            set
++            {
++                if (value > 1886 && value < DateTime.Now.Year)
++                    _builddate = value;
++                else
++                    throw new BV_InvalidBuildDateException();
++            }
++        }
++
++        public int Power
++        {
++            get
++            {
++                return _power;
++            }
++            set
++            {
++                if (value > 0 && value <= 10000)
++                    _power = value;
++                else
++                    throw new BV_InvalidPowerException();
++            }
++        }
++
++        public override string ToString()
++        {
++            return "Manufacturer: " + _manufacturer + " , Modell: " + _modell + " , Mark: "+_mark+" , Builddate: " + _builddate + " , Power: " + _power;
++        }
++    }
++}
+diff --git a/HyperLib/Properties/AssemblyInfo.cs b/HyperLib/Properties/AssemblyInfo.cs
+new file mode 100644
+index 0000000..4d448a7
+--- /dev/null
++++ b/HyperLib/Properties/AssemblyInfo.cs
+@@ -0,0 +1,36 @@
++﻿using System.Reflection;
++using System.Runtime.CompilerServices;
++using System.Runtime.InteropServices;
++
++// General Information about an assembly is controlled through the following 
++// set of attributes. Change these attribute values to modify the information
++// associated with an assembly.
++[assembly: AssemblyTitle("HyperLib")]
++[assembly: AssemblyDescription("HyperLib is a C# .net Framework v4.5.2 Library that contains a collection of usefull functions.")]
++[assembly: AssemblyConfiguration("")]
++[assembly: AssemblyCompany("ATVG-Studios")]
++[assembly: AssemblyProduct("Hyper Library®")]
++[assembly: AssemblyCopyright("Copyright © 2015-2018 ATVG-Studios")]
++[assembly: AssemblyTrademark("OSPL (http://open-source-project-license.atvg-studios.at)")]
++[assembly: AssemblyCulture("")]
++
++// Setting ComVisible to false makes the types in this assembly not visible 
++// to COM components.  If you need to access a type in this assembly from 
++// COM, set the ComVisible attribute to true on that type.
++[assembly: ComVisible(false)]
++
++// The following GUID is for the ID of the typelib if this project is exposed to COM
++[assembly: Guid("690a6b6c-c58b-42fd-aeb9-2a22c0ca2893")]
++
++// Version information for an assembly consists of the following four values:
++//
++//      Major Version
++//      Minor Version 
++//      Build Number
++//      Revision
++//
++// You can specify all the values or you can default the Build and Revision Numbers 
++// by using the '*' as shown below:
++// [assembly: AssemblyVersion("1.0.*")]
++[assembly: AssemblyVersion("2.5.3.73")]
++[assembly: AssemblyFileVersion("2.5.3.73")]
+diff --git a/HyperLib/Random/Generator.cs b/HyperLib/Random/Generator.cs
+new file mode 100644
+index 0000000..3faf91c
+--- /dev/null
++++ b/HyperLib/Random/Generator.cs
+@@ -0,0 +1,110 @@
++﻿using System;
++
++namespace HyperLib.Random
++{
++    public class Generator
++    {
++        private GeneratorType Type;
++
++        public Generator(GeneratorType type)
++        {
++            Type = type;
++        }
++
++        public string Generate(GeneratorCharset Charset)
++        {
++            if(Charset == GeneratorCharset.All)
++            {
++                if (Type == GeneratorType.RandomKey4)
++                    return genAll(4);
++                if (Type == GeneratorType.RandomKey8)
++                    return genAll(8);
++                if (Type == GeneratorType.RandomKey16)
++                    return genAll(16);
++                if (Type == GeneratorType.RandomKey32)
++                    return genAll(32);
++                if (Type == GeneratorType.RandomKey64)
++                    return genAll(64);
++                if (Type == GeneratorType.RandomKey128)
++                    return genAll(128);
++            }
++
++            if(Charset == GeneratorCharset.NumbersLowerUpperCase)
++            {
++                if (Type == GeneratorType.RandomKey4)
++                    return genNLU(4);
++                if (Type == GeneratorType.RandomKey8)
++                    return genNLU(8);
++                if (Type == GeneratorType.RandomKey16)
++                    return genNLU(16);
++                if (Type == GeneratorType.RandomKey32)
++                    return genNLU(32);
++                if (Type == GeneratorType.RandomKey64)
++                    return genNLU(64);
++                if (Type == GeneratorType.RandomKey128)
++                    return genNLU(128);
++            }
++
++            return "An Error Accoured while processing 'GeneratorType' which was given with the Constructor";
++        }
++
++
++        private string genAll(int length)
++        {
++            System.Random rnd = new System.Random();
++            string key = "";
++            for (int i = 0; i < (length - 1); i++)
++            {
++                int chr = 0;
++                int rnda = rnd.Next(0, 4);
++                switch (rnda)
++                {
++                    case 0:
++                        chr = rnd.Next(48, 57);
++                        key += (char)chr;
++                        break;
++                    case 1:
++                        chr = rnd.Next(65, 90);
++                        key += (char)chr;
++                        break;
++                    case 2:
++                        chr = rnd.Next(97, 122);
++                        key += (char)chr;
++                        break;
++                    case 3:
++                        chr = rnd.Next(35, 38);
++                        key += (char)chr;
++                        break;
++                }
++            }
++            return key;
++        }
++
++        private string genNLU(int length)
++        {
++            System.Random rnd = new System.Random();
++            string key = "";
++            for (int i = 0; i < (length - 1); i++)
++            {
++                int chr = 0;
++                int rnda = rnd.Next(0, 3);
++                switch (rnda)
++                {
++                    case 0:
++                        chr = rnd.Next(48, 57);
++                        key += (char)chr;
++                        break;
++                    case 1:
++                        chr = rnd.Next(65, 90);
++                        key += (char)chr;
++                        break;
++                    case 2:
++                        chr = rnd.Next(97, 122);
++                        key += (char)chr;
++                        break;
++                }
++            }
++            return key;
++        }
++    }
++}
+\ No newline at end of file
+diff --git a/HyperLib/Random/GeneratorCharset.cs b/HyperLib/Random/GeneratorCharset.cs
+new file mode 100644
+index 0000000..45ed354
+--- /dev/null
++++ b/HyperLib/Random/GeneratorCharset.cs
+@@ -0,0 +1,18 @@
++﻿using System;
++using System.Collections.Generic;
++using System.Linq;
++using System.Text;
++using System.Threading.Tasks;
++
++namespace HyperLib.Random
++{
++    public enum GeneratorCharset
++    {
++        All,
++        //NumbersOnly,
++        //LowercaseOnly,
++        //UppercaseOnly,
++        //SpectialChars,
++        NumbersLowerUpperCase
++    }
++}
+diff --git a/HyperLib/Random/GeneratorType.cs b/HyperLib/Random/GeneratorType.cs
+new file mode 100644
+index 0000000..34bab1c
+--- /dev/null
++++ b/HyperLib/Random/GeneratorType.cs
+@@ -0,0 +1,12 @@
++﻿namespace HyperLib.Random
++{
++    public enum GeneratorType
++    {
++        RandomKey4,
++        RandomKey8,
++        RandomKey16,
++        RandomKey32,
++        RandomKey64,
++        RandomKey128
++    }
++}
+\ No newline at end of file
+diff --git a/HyperLib/Values/Ammount.cs b/HyperLib/Values/Ammount.cs
+new file mode 100644
+index 0000000..d9604a4
+--- /dev/null
++++ b/HyperLib/Values/Ammount.cs
+@@ -0,0 +1,62 @@
++﻿namespace HyperLib.Values
++{
++    public class Ammount
++    {
++        public Ammount()
++        {
++
++        }
++
++        public static bool compareStringArray(string[] values, string comparevalue)
++        {
++            foreach(string value in values)
++            {
++                if (value.ToLower() == comparevalue.ToLower())
++                    return true;
++                else
++                    return false;
++            }
++
++            return false;
++        }
++
++        public static bool compareIntArray(int[] values, int comparevalue)
++        {
++            foreach (int value in values)
++            {
++                if (value == comparevalue)
++                    return true;
++                else
++                    return false;
++            }
++
++            return false;
++        }
++
++        public static bool compareByteArray(byte[] values, byte comparevalue)
++        {
++            foreach (byte value in values)
++            {
++                if (value == comparevalue)
++                    return true;
++                else
++                    return false;
++            }
++
++            return false;
++        }
++
++        public static bool compareBoolArray(bool[] values, bool comparevalue)
++        {
++            foreach (bool value in values)
++            {
++                if (value == comparevalue)
++                    return true;
++                else
++                    return false;
++            }
++
++            return false;
++        }
++    }
++}
+diff --git a/HyperLib/Values/Boolean.cs b/HyperLib/Values/Boolean.cs
+new file mode 100644
+index 0000000..7db1ab9
+--- /dev/null
++++ b/HyperLib/Values/Boolean.cs
+@@ -0,0 +1,38 @@
++﻿using System;
++using System.Collections.Generic;
++
++namespace HyperLib.Values
++{
++    public class Boolean
++    {
++        private static bool arebooleans;
++
++        public Boolean()
++        {
++            arebooleans = true;
++        }
++
++        public static bool isBoolean(String value)
++        {
++            if (value == "" || value == null)
++                return false;
++
++            if (value.ToLower() == "true")
++                return true;
++            else
++                return false;
++        }
++
++        public static bool areBooleans(List<String> values)
++        {
++            if (values == null)
++                return false;
++
++            foreach (String value in values)
++            {
++                if (!isBoolean(value)) arebooleans = false;
++            }
++            return arebooleans;
++        }
++    }
++}
+diff --git a/HyperLib/Values/Double.cs b/HyperLib/Values/Double.cs
+new file mode 100644
+index 0000000..3eb11d9
+--- /dev/null
++++ b/HyperLib/Values/Double.cs
+@@ -0,0 +1,53 @@
++﻿using System;
++using System.Collections.Generic;
++
++namespace HyperLib.Values
++{
++    public class Double
++    {
++        private static bool aredoubles;
++        private static String[] parts;
++
++        public Double()
++        {
++            aredoubles = true;
++            parts = null;
++        }
++
++        public static bool isDouble(String value)
++        {
++			if (value != "" && value != null)
++			{
++				if (value.Contains("."))
++				{
++					parts = value.Split('.');
++				}
++				else {
++					parts = value.Split(',');
++				}
++
++				if (parts.Length != 2)
++					return false;
++
++				if (parts.Length == 2 && Integer.isInteger(parts[0]) && Integer.isInteger(parts[1])) {
++					return true;
++				}
++
++			}
++
++			return false;
++        }
++
++        public static bool areDoubles(List<String> values)
++        {
++            if (values == null)
++                return false;
++
++            foreach (String value in values)
++            {
++                if(!isDouble(value)) aredoubles = false;
++            }
++            return aredoubles;
++        }
++    }
++}
+diff --git a/HyperLib/Values/Integer.cs b/HyperLib/Values/Integer.cs
+new file mode 100644
+index 0000000..5fa0752
+--- /dev/null
++++ b/HyperLib/Values/Integer.cs
+@@ -0,0 +1,41 @@
++﻿using System;
++using System.Linq;
++
++namespace HyperLib.Values
++{
++    public class Integer
++    {
++        public static bool isInteger(String value)
++        {
++            if (value == "" || value == null)
++                return false;
++
++            bool isnumber = true;
++            char[] numbers = new char[10];
++            numbers[0] = '0'; numbers[1] = '1';
++            numbers[2] = '2'; numbers[3] = '3';
++            numbers[4] = '4'; numbers[5] = '5';
++            numbers[6] = '6'; numbers[7] = '7';
++            numbers[8] = '8'; numbers[9] = '9';
++            if (value == "" && value == null) return false;
++            foreach (char x in value) { if (numbers.Contains(x)) { } else { isnumber = false; } }
++            if (isnumber) return true;
++            else return false;
++        }
++
++        public static bool areIntegers(String[] values)
++        {
++            if (values == null)
++                return false;
++
++            bool arenumbers = true;
++            foreach (String value in values)
++            {
++                bool isnumber = isInteger(value);
++                if (isnumber) { } else arenumbers = false;
++            }
++            if (arenumbers) return true;
++            else return false;
++        }
++    }
++}
+diff --git a/HyperLib/Values/IntegerSort.cs b/HyperLib/Values/IntegerSort.cs
+new file mode 100644
+index 0000000..0c62ab0
+--- /dev/null
++++ b/HyperLib/Values/IntegerSort.cs
+@@ -0,0 +1,91 @@
++﻿namespace HyperLib.Values
++{
++    public class IntegerSort
++    {
++        public IntegerSort()
++        {
++
++        }
++
++        public static int[] bubbleSort(int[] data)
++        {
++            bool newLoopNeeded = false;
++            int temp;
++            int loop = 0;
++
++            while (!newLoopNeeded)
++            {
++                newLoopNeeded = true;
++                for (int i = 0; i < data.Length - 1; i++)
++                {
++                    if (data[i + 1] < data[i])
++                    {
++                        temp = data[i];
++                        data[i] = data[i + 1];
++                        data[i + 1] = temp;
++                        newLoopNeeded = false;
++                    }
++                    loop++;
++                }
++            }
++
++            return data;
++        }
++
++        public static int[] insertionSort(int[] data)
++        {
++            for (int i = 0; i < data.Length - 1; i++)
++            {
++                int j = i + 1;
++
++                while (j > 0)
++                {
++                    if (data[j - 1] > data[j])
++                    {
++                        int temp = data[j - 1];
++                        data[j - 1] = data[j];
++                        data[j] = temp;
++
++                    }
++                    j--;
++                }
++            }
++            return data;
++        }
++
++        public static int[] quickSort(int[] data, int start, int end)
++        {
++            if (start >= end)
++            {
++                return data;
++            }
++
++            int num = data[start];
++
++            int i = start, j = end;
++
++            while (i < j)
++            {
++                while (i < j && data[j] > num)
++                {
++                    j--;
++                }
++
++                data[i] = data[j];
++
++                while (i < j && data[i] < num)
++                {
++                    i++;
++                }
++
++                data[j] = data[i];
++            }
++
++            data[i] = num;
++            quickSort(data, start, i - 1);
++            quickSort(data, i + 1, end);
++
++            return data;
++        }
++    }
++}
+diff --git a/HyperLib/Values/Letter.cs b/HyperLib/Values/Letter.cs
+new file mode 100644
+index 0000000..e01892d
+--- /dev/null
++++ b/HyperLib/Values/Letter.cs
+@@ -0,0 +1,39 @@
++﻿using System;
++using System.Linq;
++
++namespace HyperLib.Values
++{
++    public class Letter
++    {
++        private static bool areonlyletters;
++        private static char[] lcl = new char[26];
++
++        public Letter()
++        {
++            areonlyletters = true;
++            lcl[0] = 'a'; lcl[1] = 'b'; lcl[2] = 'c'; lcl[3] = 'd'; lcl[4] = 'e'; lcl[5] = 'f'; lcl[6] = 'g';
++            lcl[7] = 'h'; lcl[8] = 'i'; lcl[9] = 'j'; lcl[10] = 'k'; lcl[11] = 'l'; lcl[12] = 'm'; lcl[13] = 'n';
++            lcl[14] = 'o'; lcl[15] = 'p'; lcl[16] = 'q'; lcl[17] = 'r'; lcl[18] = 's'; lcl[19] = 't'; lcl[20] = 'u';
++            lcl[21] = 'v'; lcl[22] = 'w'; lcl[23] = 'x'; lcl[24] = 'y'; lcl[25] = 'z';
++        }
++
++        public static bool areOnlyLetters(String value)
++        {
++            if (value == "" || value == null)
++                return false;
++
++            foreach (char x in value.ToLower())
++            {
++               if(!lcl.Contains(x)) areonlyletters = false;
++            }
++
++            return areonlyletters;
++        }
++
++        public static bool isLetter(char value)
++        {
++            if (lcl.Contains(value)) return true;
++            else return false;
++        }
++    }
++}
+diff --git a/HyperLib/app.config b/HyperLib/app.config
+new file mode 100644
+index 0000000..1616f6a
+--- /dev/null
++++ b/HyperLib/app.config
+@@ -0,0 +1,9 @@
++<?xml version="1.0" encoding="utf-8"?>
++<configuration>
++  <system.data>
++    <DbProviderFactories>
++      <remove invariant="MySql.Data.MySqlClient"/>
++      <add name="MySQL Data Provider" invariant="MySql.Data.MySqlClient" description=".Net Framework Data Provider for MySQL" type="MySql.Data.MySqlClient.MySqlClientFactory, MySql.Data, Version=6.9.9.0, Culture=neutral, PublicKeyToken=c5687fc88969c44d"/>
++    </DbProviderFactories>
++  </system.data>
++<startup><supportedRuntime version="v4.0" sku=".NETFramework,Version=v4.6"/></startup></configuration>
+diff --git a/HyperLib/packages.config b/HyperLib/packages.config
+new file mode 100644
+index 0000000..a759195
+--- /dev/null
++++ b/HyperLib/packages.config
+@@ -0,0 +1,4 @@
++﻿<?xml version="1.0" encoding="utf-8"?>
++<packages>
++  <package id="MySql.Data" version="6.9.9" targetFramework="net452" />
++</packages>
+\ No newline at end of file
+diff --git a/HyperLib_Help.txt b/HyperLib_Help.txt
+deleted file mode 100644
+index 11d5e2c..0000000
+--- a/HyperLib_Help.txt
++++ /dev/null
+@@ -1,87 +0,0 @@
+-#This File is not Finished yet ... there are a lot of functions not listed.
+-
+-HyperLib v2.4.5.63 by Thomas Obernosterer
+-
+-Einbindung für C# Code
+-{
+-	using HyperLib;
+-}
+-
+-Funktionen für Integer
+-{
+-	using HyperLib;
+-
+-	bool IsStringANumber = Integer.isInteger(stringvalue);
+-
+-	bool AreStringsNumbers = Integer.areIntegers(stringarray);
+-}
+-
+-Funktionen für Boolean
+-{
+-	using HyperLib;
+-
+-	bool IsStringABoolean = Boolean.isBoolean(stringvalue);
+-	
+-	bool AreStringsBooleans = Boolean.areBooleans(stringarray);
+-}
+-
+-Funktionen für Double
+-{
+-	using HyperLib;
+-
+-	bool IsStringADouble = Double.isDouble(stringvalue);
+-
+-	bool AreStringsDoubles = Double.areDoubles(stringarray);
+-}
+-
+-Funktionen für Letter
+-{
+-	using HyperLib;
+-
+-	bool IsCharALetter = Letter.isLetter(charvalue);
+-
+-	bool AreStringsOnlyLetters = Letter.areOnlyLetters(stringvalue);
+-}
+-
+-Funktionen für EasyCrypt
+-{
+-	using HyperLib;
+-
+-	string ByteHash = EasyCrypt.GetSHA256Hash(bytearray);
+-
+-	string StreamHash = EasyCrypt.GetSHA256Hash(stream);	
+-}
+-
+-Funktionen für Ammount
+-{
+-	using HyperLib;
+-
+-	bool IsArrayContentTheSameAsString = Ammount.compareStringArray(stringarray, stringvalue);
+-
+-	bool IsArrayContentTheSameAsInteger = Ammount.compareIntArray(intarray, intvalue);
+-
+- 	bool IsArrayContentTheSameAsByte = Ammount.compareByteArray(bytearray, bytevalue);
+-
+-	bool IsArrayContentTheSameAsBoolean = Ammount.compareBoolArray(boolarray, boolvalue);
+-}
+-
+-Funktionen für ASCII
+-{
+-	using HyperLib;
+-
+-	int[] asciiFromString = ASCII.StringToAscii(stringvalue);
+-
+-	string stringFromAscii = ASCII.AsciiToString(intarray);
+-
+-	int intFromChar = ASCII.CharToAscii(charvalue);
+-
+-	char charFromInt = ASCII.AsciiToChar(intvalue);
+-}
+-
+-Funktionen für ASCII_Check
+-{
+-	using HyperLib;
+-
+-	ASCII_Check.InternalConvert(chararray);
+-	ASCII_Check.
+-}
+diff --git a/LICENSE b/LICENSE
+deleted file mode 100644
+index a7635a4..0000000
+--- a/LICENSE
++++ /dev/null
+@@ -1,21 +0,0 @@
+-OSPL v1 (Open Source Product License Version 1.1 by ATVG-Studios)
+-
+-Copyright (c) 2015-2017 Thomas Obernosterer (ATVG-Studios)
+-
+-Permission is hereby granted, free of charge, to any person
+-obtaining a copy of this software and associated documentation
+-files (the "Software"), to deal in the Software without restriction,
+-including without limitation the rights to use, copy, modify, merge, publish,
+-distribute and sublicense the Software, and to permit persons to whom the
+-Software is furnished to do so, subject to the following conditions:
+-
+-The above copyright notice and this permission notice shall be included in all
+-copies or substantial portions of the Software.
+-
+-THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+-IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+-FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+-AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+-LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+-OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+-SOFTWARE.
+diff --git a/LICENSE.md b/LICENSE.md
+new file mode 100644
+index 0000000..a7635a4
+--- /dev/null
++++ b/LICENSE.md
+@@ -0,0 +1,21 @@
++OSPL v1 (Open Source Product License Version 1.1 by ATVG-Studios)
++
++Copyright (c) 2015-2017 Thomas Obernosterer (ATVG-Studios)
++
++Permission is hereby granted, free of charge, to any person
++obtaining a copy of this software and associated documentation
++files (the "Software"), to deal in the Software without restriction,
++including without limitation the rights to use, copy, modify, merge, publish,
++distribute and sublicense the Software, and to permit persons to whom the
++Software is furnished to do so, subject to the following conditions:
++
++The above copyright notice and this permission notice shall be included in all
++copies or substantial portions of the Software.
++
++THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
++IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
++FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
++AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
++LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
++OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
++SOFTWARE.

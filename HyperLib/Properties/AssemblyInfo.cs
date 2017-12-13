@@ -9,9 +9,9 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyDescription("HyperLib is a C# .net Framework v4.5.2 Library that contains a collection of usefull functions.")]
 [assembly: AssemblyConfiguration("")]
 [assembly: AssemblyCompany("ATVG-Studios")]
-[assembly: AssemblyProduct("Hyper Library")]
-[assembly: AssemblyCopyright("Copyright © 2017 ATVG-Studios")]
-[assembly: AssemblyTrademark("ATVG-DevelopmentStudio, Software®")]
+[assembly: AssemblyProduct("Hyper Library®")]
+[assembly: AssemblyCopyright("Copyright © 2015-2018 ATVG-Studios")]
+[assembly: AssemblyTrademark("OSPL (http://open-source-project-license.atvg-studios.at)")]
 [assembly: AssemblyCulture("")]
 
 // Setting ComVisible to false makes the types in this assembly not visible 
@@ -32,5 +32,5 @@ using System.Runtime.InteropServices;
 // You can specify all the values or you can default the Build and Revision Numbers 
 // by using the '*' as shown below:
 // [assembly: AssemblyVersion("1.0.*")]
-[assembly: AssemblyVersion("2.5.2.71")]
-[assembly: AssemblyFileVersion("2.5.2.71")]
+[assembly: AssemblyVersion("2.5.3.73")]
+[assembly: AssemblyFileVersion("2.5.3.73")]

@@ -9,11 +9,12 @@
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>HyperLib</RootNamespace>
     <AssemblyName>HyperLib</AssemblyName>
-    <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
+    <TargetFrameworkVersion>v4.6</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <ReleaseVersion>2.5.3.72</ReleaseVersion>
     <SynchReleaseVersion>false</SynchReleaseVersion>
     <Description>HyperLib is a C# .net Framework v4.5.2 Library that contains a collection of usefull functions and classes (also contains a basic Vehicle Object)</Description>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -49,6 +50,7 @@
     <Reference Include="System.Web" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Cryptography\EasyCrypt.cs" />
     <Compile Include="Managers\MySQLManager.cs" />
     <Compile Include="Values\Ammount.cs" />
     <Compile Include="ASCII\ASCII.cs" />
